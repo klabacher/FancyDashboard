@@ -1,7 +1,7 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { LayoutGroup, motion } from "framer-motion";
+import { LayoutGroup, motion, AnimatePresence } from "framer-motion";
 import { BentoGrid } from "./components/BentoGrid";
 import WidgetWrapper from "./components/WidgetWrapper";
 import {
@@ -31,6 +31,13 @@ const toPercent = (value?: number, total?: number) => {
 function App() {
   const { viewMode, setViewMode, metrics, setMetrics, specs, setSpecs } =
     useDashboardStore();
+  const [time, setTime] = useState(new Date());
+  const [clickThroughActive, setClickThroughActive] = useState(false);
+
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const unlistenPromise = listen<TelemetryPayload>(
@@ -46,6 +53,19 @@ function App() {
       unlistenPromise.then((unlisten) => unlisten());
     };
   }, [setMetrics, setSpecs]);
+
+  const toggleClickThrough = async () => {
+    if (clickThroughActive) return;
+    
+    setClickThroughActive(true);
+    await invoke("set_click_through", { passthrough: true });
+    
+    // Auto-revert after 5 seconds to prevent lock-out
+    setTimeout(async () => {
+      await invoke("set_click_through", { passthrough: false });
+      setClickThroughActive(false);
+    }, 5000);
+  };
 
   const memoryPercent = useMemo(
     () => toPercent(metrics?.memory_used, metrics?.memory_total),
@@ -67,126 +87,171 @@ function App() {
   const columns = viewMode === "wide" ? 4 : 2;
 
   return (
-    <div className="min-h-screen bg-transparent text-slate-100 pointer-events-none">
-      <header className="flex items-center justify-between px-6 pb-2 pt-6">
-        <div className="flex flex-col gap-2">
-          <span className="accent-pill">System overlay</span>
-          <div className="text-xs text-slate-400">Live metrics pushed via Tauri</div>
+    <div className="min-h-screen bg-transparent text-slate-100 pointer-events-none p-6 select-none">
+      <header className="flex items-center justify-between mb-8 pointer-events-auto">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-3">
+            <span className="accent-pill shadow-[0_0_15px_rgba(99,102,241,0.4)]">
+              FancyDashboard
+            </span>
+            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
+              v0.1.0-beta
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-3 pointer-events-auto">
+        
+        <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md p-1.5 rounded-full border border-white/5 shadow-xl">
           <motion.button
-            whileTap={{ scale: 0.97 }}
-            className="rounded-full border border-slate-600/60 bg-slate-900/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-200 shadow-sm hover:border-slate-300/40"
-            onClick={() =>
-              setViewMode(viewMode === "wide" ? "compact" : "wide")
-            }
+            whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.1)" }}
+            whileTap={{ scale: 0.95 }}
+            className="rounded-full px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-300 transition-colors"
+            onClick={() => setViewMode(viewMode === "wide" ? "compact" : "wide")}
           >
-            {viewMode === "wide" ? "Compact" : "Wide"} layout
+            {viewMode === "wide" ? "Compact" : "Wide"}
           </motion.button>
-          <div className="text-xs text-slate-500">grid {columns} cols</div>
+          
+          <div className="w-px h-4 bg-white/10" />
+          
+          <motion.button
+            whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.1)" }}
+            whileTap={{ scale: 0.95 }}
+            className={`rounded-full px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest transition-colors ${
+              clickThroughActive ? "text-emerald-400 bg-emerald-400/10" : "text-slate-300"
+            }`}
+            onClick={toggleClickThrough}
+          >
+            {clickThroughActive ? "Passthrough ON (5s)" : "Test Click-Through"}
+          </motion.button>
         </div>
       </header>
 
       <LayoutGroup>
-        <BentoGrid columns={columns} className="px-6 pb-10">
-          <WidgetWrapper
-            size="2x1"
-            title="CPU Load"
-            rightSlot={<span className="text-[10px] text-slate-400">1s push</span>}
-          >
-            <div className="flex items-end justify-between gap-4">
-              <div>
-                <div className="text-4xl font-semibold text-white">
-                  {cpuUsage.toFixed(1)}%
+        <BentoGrid columns={columns}>
+          <AnimatePresence mode="popLayout">
+            <WidgetWrapper
+              key="clock"
+              size="1x1"
+              title="Local Time"
+              className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10"
+            >
+              <div className="flex h-full flex-col justify-center items-center">
+                <div className="text-3xl font-bold text-white tracking-tight">
+                  {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </div>
-                <p className="text-xs text-slate-400">global usage</p>
+                <div className="text-xs text-slate-400 font-mono mt-1">
+                  {time.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+                </div>
               </div>
-              <div className="relative h-24 w-24 overflow-hidden rounded-full border border-slate-700/70 bg-slate-900/50">
-                <div
-                  className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-cyan-400/70 via-sky-400/60 to-transparent"
-                  style={{ height: `${Math.min(cpuUsage, 100)}%` }}
-                />
-                <div className="absolute inset-3 rounded-full border border-white/10" />
-              </div>
-            </div>
-          </WidgetWrapper>
+            </WidgetWrapper>
 
-          <WidgetWrapper
-            size="2x1"
-            title="Memory"
-            rightSlot={
-              <div className="text-[10px] text-slate-300">
-                {formatBytes(metrics?.memory_used)} / {formatBytes(metrics?.memory_total)}
+            <WidgetWrapper
+              key="cpu"
+              size="2x1"
+              title="CPU Load"
+              rightSlot={<span className="text-[10px] text-emerald-400 animate-pulse">● Live</span>}
+            >
+              <div className="flex items-end justify-between gap-6 h-full">
+                <div className="flex flex-col justify-end pb-1">
+                  <div className="text-5xl font-bold text-white tracking-tighter">
+                    {cpuUsage.toFixed(0)}<span className="text-2xl text-slate-500 ml-1">%</span>
+                  </div>
+                  <p className="text-[10px] text-slate-400 uppercase tracking-wider mt-1">Total Usage</p>
+                </div>
+                <div className="relative h-20 w-32 overflow-hidden rounded-xl bg-slate-900/50 border border-white/5">
+                  <div className="absolute inset-0 flex items-end gap-1 p-1">
+                    {Array.from({ length: 12 }).map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className="flex-1 bg-indigo-500/40 rounded-sm"
+                        animate={{ 
+                          height: `${Math.max(10, Math.random() * cpuUsage)}%`,
+                          opacity: 0.5 + (i / 24)
+                        }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
-            }
-          >
-            <div className="flex flex-col gap-3">
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-semibold text-white">
-                  {memoryPercent.toFixed(1)}%
-                </span>
-                <span className="text-xs text-slate-400">utilized</span>
-              </div>
-              <div className="relative h-3 overflow-hidden rounded-full bg-slate-900/70">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-indigo-400 via-sky-400 to-emerald-300"
-                  style={{ width: `${memoryPercent}%` }}
-                />
-              </div>
-              <p className="text-xs text-slate-500">
-                Dense fill ensures no gaps even when widgets resize.
-              </p>
-            </div>
-          </WidgetWrapper>
+            </WidgetWrapper>
 
-          <WidgetWrapper size="1x1" title="Temperature">
-            {hottestProbe ? (
-              <div className="flex h-full flex-col justify-between">
-                <div className="text-lg font-semibold text-white">
-                  {hottestProbe.temperature.toFixed(1)}°C
+            <WidgetWrapper
+              key="memory"
+              size="2x1"
+              title="Memory"
+              rightSlot={
+                <div className="text-[10px] font-mono text-slate-400">
+                  {formatBytes(metrics?.memory_used)} / {formatBytes(metrics?.memory_total)}
                 </div>
-                <div className="text-xs text-slate-400">{hottestProbe.label}</div>
-              </div>
-            ) : (
-              <p className="text-sm text-slate-500">Awaiting sensors...</p>
-            )}
-          </WidgetWrapper>
-
-          <WidgetWrapper size="1x1" title="Mode">
-            <div className="flex h-full flex-col justify-between text-sm text-slate-300">
-              <span className="text-lg font-semibold text-white">{viewMode}</span>
-              <p className="text-xs text-slate-500">Grid auto-dense, 2 or 4 columns.</p>
-            </div>
-          </WidgetWrapper>
-
-          <WidgetWrapper size="2x2" title="System Specs">
-            {specs ? (
-              <div className="flex flex-col gap-3 text-sm text-slate-200">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Host</span>
-                  <span className="font-semibold text-white">{specs.host}</span>
+              }
+            >
+              <div className="flex flex-col justify-center h-full gap-4">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-3xl font-bold text-white">
+                    {memoryPercent.toFixed(1)}%
+                  </span>
+                  <span className="text-xs text-slate-400 uppercase tracking-wider">RAM Utilized</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400">OS</span>
-                  <span className="font-semibold text-white">{specs.os_version}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400">CPU</span>
-                  <span className="font-semibold text-white">{specs.cpu_brand}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Cores</span>
-                  <span className="font-semibold text-white">{specs.physical_cores ?? "?"}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Memory</span>
-                  <span className="font-semibold text-white">{formatBytes(specs.total_memory)}</span>
+                <div className="relative h-2 overflow-hidden rounded-full bg-slate-800">
+                  <motion.div
+                    className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${memoryPercent}%` }}
+                    transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                  />
                 </div>
               </div>
-            ) : (
-              <p className="text-sm text-slate-500">Loading host specs...</p>
-            )}
-          </WidgetWrapper>
+            </WidgetWrapper>
+
+            <WidgetWrapper key="temp" size="1x1" title="Thermals">
+              {hottestProbe ? (
+                <div className="flex h-full flex-col justify-center items-center relative">
+                  <div className="absolute inset-0 bg-orange-500/5 blur-2xl rounded-full" />
+                  <div className={`text-3xl font-bold ${hottestProbe.temperature > 80 ? 'text-red-400' : 'text-orange-300'}`}>
+                    {hottestProbe.temperature.toFixed(0)}°
+                  </div>
+                  <div className="text-[10px] text-slate-400 mt-1 max-w-full truncate px-2">
+                    {hottestProbe.label}
+                  </div>
+                </div>
+              ) : (
+                <div className="flex h-full items-center justify-center text-xs text-slate-500">
+                  No sensors
+                </div>
+              )}
+            </WidgetWrapper>
+
+            <WidgetWrapper key="specs" size="2x2" title="System Specs">
+              {specs ? (
+                <div className="flex flex-col gap-3 text-xs text-slate-300 h-full justify-center">
+                  <div className="p-3 rounded-lg bg-white/5 border border-white/5">
+                    <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Host</div>
+                    <div className="font-semibold text-white truncate">{specs.host}</div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 rounded-lg bg-white/5 border border-white/5">
+                      <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">CPU</div>
+                      <div className="font-semibold text-white truncate" title={specs.cpu_brand}>
+                        {specs.cpu_brand.split(' ')[0]}
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-white/5 border border-white/5">
+                      <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Cores</div>
+                      <div className="font-semibold text-white">{specs.physical_cores ?? "?"}</div>
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-lg bg-white/5 border border-white/5">
+                    <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">OS</div>
+                    <div className="font-semibold text-white truncate">{specs.os_version}</div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex h-full items-center justify-center text-xs text-slate-500 animate-pulse">
+                  Scanning hardware...
+                </div>
+              )}
+            </WidgetWrapper>
+          </AnimatePresence>
         </BentoGrid>
       </LayoutGroup>
     </div>

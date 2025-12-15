@@ -29,21 +29,24 @@ export function WidgetWrapper({
   return (
     <motion.div
       layout
-      layoutRoot
+      initial={{ opacity: 0, scale: 0.9, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ type: "spring", stiffness: 300, damping: 25 }}
       className={clsx(
-        "pointer-events-auto rounded-2xl p-4 md:p-5 glass-panel edge-glow shadow-lg hover:scale-[1.02] transition-transform duration-300",
+        "pointer-events-auto relative flex flex-col overflow-hidden rounded-3xl p-5 glass-panel edge-glow shadow-2xl transition-colors duration-300 hover:bg-white/[0.02]",
         sizeToSpan[size],
         styles.surface,
         className,
       )}
     >
       {(title || rightSlot) && (
-        <div className="mb-4 flex items-center justify-between gap-2 text-xs uppercase tracking-[0.2em] text-slate-300/70">
+        <div className="mb-4 flex items-center justify-between gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400/80">
           <span className="truncate">{title}</span>
           {rightSlot}
         </div>
       )}
-      {children}
+      <div className="relative z-10 flex-1">{children}</div>
     </motion.div>
   );
 }
