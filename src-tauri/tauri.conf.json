@@ -15,6 +15,7 @@
         "title": "Fancy Dashboard",
         "label": "main",
         "decorations": false,
+        "transparent": true,
         "alwaysOnBottom": true,
         "maximized": true,
         "skipTaskbar": true,

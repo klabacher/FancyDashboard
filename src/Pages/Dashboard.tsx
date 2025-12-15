@@ -90,7 +90,7 @@ export default function Dashboard() {
 
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black p-8 text-zinc-900 dark:text-zinc-100">
+    <div className="min-h-screen p-8 text-zinc-900 dark:text-zinc-100">
       {/* Header com 3 icones bem pequenos Home - Modules - Settings */}
       <div className="flex justify-center gap-1.5 items-center mb-8">
         <FiHome size={20} className="cursor-pointer hover:text-blue-500" />
