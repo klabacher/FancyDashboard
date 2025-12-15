@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import layoutReducer, { updateLayout, setViewMode } from "../store/layoutSlice";
+import layoutReducer, { updateLayout, setViewMode } from "../Store/layoutSlice";
 
 describe("layoutSlice", () => {
   const initialState = {

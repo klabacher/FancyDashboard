@@ -23,12 +23,13 @@
     "paths": {
       "@Components/*": ["Components/*"],
       "@Pages/*": ["Pages/*"],
-      "@Store/*": ["store/*"],
+      "@Store/*": ["Store/*"],
       "@State/*": ["State/*"],
-      "@Assets/*": ["assets/*"],
-      "@Utils/*": ["utils/*"],
-      "@Tests/*": ["__tests__/*"]
-    }
+      "@Assets/*": ["Assets/*"],
+      "@Utils/*": ["Utils/*"],
+      "@__tests__/*": ["__tests__/*"]
+    },
+    
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
