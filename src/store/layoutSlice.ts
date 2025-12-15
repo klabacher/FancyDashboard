@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { Layout } from "react-grid-layout";
+import type { LayoutItem } from "react-grid-layout";
 
 export interface LayoutState {
   layouts: {
-    lg: Layout;
-    md: Layout;
-    sm: Layout;
+    lg: LayoutItem[];
+    md: LayoutItem[];
+    sm: LayoutItem[];
   };
   viewMode: "wide" | "compact";
 }
@@ -45,7 +45,7 @@ const layoutSlice = createSlice({
   reducers: {
     updateLayout: (
       state,
-      action: PayloadAction<{ layout: Layout; breakpoint: string }>
+      action: PayloadAction<{ layout: LayoutItem[]; breakpoint: string }>
     ) => {
       const { layout, breakpoint } = action.payload;
       // @ts-expect-error - dynamic key access

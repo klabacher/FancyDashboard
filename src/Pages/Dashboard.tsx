@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { motion } from "framer-motion";
-import { ResponsiveGridLayout, type Layout } from "react-grid-layout";
+import { ResponsiveGridLayout, type LayoutItem } from "react-grid-layout";
 import { useDispatch, useSelector } from "react-redux";
 import WidgetWrapper from "../Components/WidgetWrapper";
 import {
@@ -151,7 +151,7 @@ function Dashboard() {
         onLayoutChange={(layout) => {
           dispatch(
             updateLayout({
-              layout: layout as Layout,
+              layout: layout as LayoutItem[],
               breakpoint: currentBreakpoint,
             })
           );
@@ -159,9 +159,8 @@ function Dashboard() {
         onBreakpointChange={(newBreakpoint) =>
           setCurrentBreakpoint(newBreakpoint)
         }
-        isDraggable={true}
-        isResizable={true}
-        draggableHandle=".glass-panel"
+        {...{ draggableHandle: ".glass-panel" }}
+        width={typeof window !== "undefined" ? window.innerWidth : 1200}
       >
         <div key="clock">
           <WidgetWrapper
