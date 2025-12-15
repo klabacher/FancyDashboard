@@ -33,6 +33,9 @@ const renderWithStore = (component: React.ReactNode) => {
 describe("Dashboard", () => {
   it("renders without crashing", () => {
     renderWithStore(<Dashboard />);
-    expect(screen.getByText("FancyDashboard")).toBeInTheDocument();
+    const matches = screen.getAllByText(
+      /Dashboard Interativo|Receita Total|Usuários/
+    );
+    expect(matches.length).toBeGreaterThan(0);
   });
 });

@@ -10,7 +10,7 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
-import layoutReducer from "./layoutSlice";
+import layoutReducer from "@Store/layoutSlice";
 
 const persistConfig = {
   key: "root",
