@@ -1,0 +1,13 @@
+/.changes
+/.github
+node_modules
+node/index.js
+node/index.d.ts
+CHANGELOG.md
+pnpm-lock.yaml
+dist
+target
+build
+src-tauri/target
+.vscode
+coverage

@@ -26,14 +26,14 @@ type DashboardState = {
   viewMode: ViewMode;
   metrics?: TelemetryPayload;
   specs?: Specs;
-  setViewMode: (mode: ViewMode) => void;
-  setMetrics: (payload: TelemetryPayload) => void;
-  setSpecs: (payload: Specs) => void;
+  setViewMode: (_mode: ViewMode) => void;
+  setMetrics: (_payload: TelemetryPayload) => void;
+  setSpecs: (_payload: Specs) => void;
 };
 
 export const useDashboardStore = create<DashboardState>((set) => ({
   viewMode: "wide",
-  setViewMode: (mode) => set({ viewMode: mode }),
-  setMetrics: (payload) => set({ metrics: payload }),
-  setSpecs: (payload) => set({ specs: payload }),
+  setViewMode: (_mode) => set({ viewMode: _mode }),
+  setMetrics: (_payload) => set({ metrics: _payload }),
+  setSpecs: (_payload) => set({ specs: _payload }),
 }));

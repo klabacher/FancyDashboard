@@ -12,14 +12,13 @@
   "app": {
     "windows": [
       {
-        "title": "fancydashboard",
-        "width": 1280,
-        "height": 720,
-        "transparent": true,
+        "title": "Fancy Dashboard",
+        "label": "main",
         "decorations": false,
-        "alwaysOnTop": true,
-        "shadow": false,
-        "visible": true
+        "alwaysOnBottom": true,
+        "maximized": true,
+        "skipTaskbar": true,
+        "resizable": false
       }
     ],
     "security": {

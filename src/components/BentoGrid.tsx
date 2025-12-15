@@ -15,14 +15,19 @@ const columnClass = (columns?: number) => {
   return "grid-cols-2";
 };
 
-export function BentoGrid({ children, columns = 4, dense = true, className }: BentoGridProps) {
+export function BentoGrid({
+  children,
+  columns = 4,
+  dense = true,
+  className,
+}: BentoGridProps) {
   return (
     <div
       className={clsx(
         "w-full grid gap-4 md:gap-6",
         dense && "grid-flow-dense",
         columnClass(columns),
-        className,
+        className
       )}
     >
       {children}
