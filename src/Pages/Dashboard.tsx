@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { BentoGrid, BentoItem } from "@Components/BentoGrid";
 import { motion } from "framer-motion";
+import { FiHome, FiGrid, FiSettings } from "react-icons/fi";
 
 // Mock de dados (Tipagem forte é seu amigo)
 type Widget = {
@@ -87,19 +88,17 @@ export default function Dashboard() {
     setWidgets((prev) => [...prev].sort(() => Math.random() - 0.5));
   };
 
+
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black p-8 text-zinc-900 dark:text-zinc-100">
-      {/* Header com Controles */}
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">
-          Dashboard Interativo
-        </h1>
-        <button
-          onClick={shuffleWidgets}
-          className="px-4 py-2 bg-zinc-900 text-white rounded-lg text-sm font-medium hover:bg-zinc-700 transition active:scale-95"
-        >
-          🔀 Embaralhar Grid
-        </button>
+      {/* Header com 3 icones bem pequenos Home - Modules - Settings */}
+      <div className="flex justify-center gap-1.5 items-center mb-8">
+        <FiHome size={20} className="cursor-pointer hover:text-blue-500" />
+        <span className="text-lg font-bold">-</span>
+        <FiGrid size={20} className="cursor-pointer hover:text-blue-500" />
+        <span className="text-lg font-bold">-</span>
+        {/* TODO: Goto settings page. Now closes app */}
+        <FiSettings onClick={() => {}} size={20} className="cursor-pointer hover:text-blue-500" />
       </div>
 
       <BentoGrid>
