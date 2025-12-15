@@ -28,7 +28,6 @@
       "@Assets/*": ["assets/*"],
       "@Utils/*": ["utils/*"],
       "@Tests/*": ["__tests__/*"]
-
     }
   },
   "include": ["src"],

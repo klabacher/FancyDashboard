@@ -17,7 +17,10 @@ export type WidgetWrapperProps = Omit<
 };
 
 export const WidgetWrapper = forwardRef<HTMLDivElement, WidgetWrapperProps>(
-  ({ size = "1x1", title, rightSlot, className, children, ...props }, ref) => {
+  function WidgetWrapper(
+    { size = "1x1", title, rightSlot, className, children, ...props },
+    ref
+  ) {
     const sizeToSpan: Record<WidgetSize, string> = {
       "1x1": "col-span-1 row-span-1",
       "2x1": "col-span-2 row-span-1",
@@ -50,5 +53,8 @@ export const WidgetWrapper = forwardRef<HTMLDivElement, WidgetWrapperProps>(
     );
   }
 );
+
+(WidgetWrapper as unknown as { displayName?: string }).displayName =
+  "WidgetWrapper";
 
 export default WidgetWrapper;

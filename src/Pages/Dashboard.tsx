@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BentoGrid, BentoItem } from "../Components/BentoGrid";
+import { BentoGrid, BentoItem } from "@Components/BentoGrid";
 import { motion } from "framer-motion";
 
 // Mock de dados (Tipagem forte é seu amigo)

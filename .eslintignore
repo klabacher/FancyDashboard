@@ -1,0 +1,8 @@
+node_modules
+dist
+build
+target
+new-src
+src-tauri/target
+coverage
+.vscode

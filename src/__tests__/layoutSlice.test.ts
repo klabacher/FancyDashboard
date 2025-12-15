@@ -25,7 +25,7 @@ describe("layoutSlice", () => {
 
   it("should handle updateLayout", () => {
     const newLayout = [{ i: "test", x: 0, y: 0, w: 1, h: 1 }];
-    // @ts-ignore
+    // dynamic layout typing for test
     const actual = layoutReducer(
       initialState,
       updateLayout({ layout: newLayout, breakpoint: "lg" })
