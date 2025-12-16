@@ -54,7 +54,7 @@ export default function BentoGridHeader({
   shuffleWidgets: () => void;
 }) {
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 z-50 flex items-center justify-between px-6 bg-gradient-to-b from-black/20 to-transparent pointer-events-none">
+    <header className="fixed top-0 left-0 right-0 h-16 z-50 flex items-center justify-between px-6 bg-linear-to-b from-black/20 to-transparent pointer-events-none">
       {/* Left: Minimal Branding or Empty for balance */}
       <div className="w-24 pointer-events-auto">
         <div className="w-3 h-3 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
@@ -67,7 +67,7 @@ export default function BentoGridHeader({
 
       {/* Right: Actions (Subtle) */}
       <nav className="flex items-center gap-2 pointer-events-auto">
-        <IconButton icon={<FiHome size={16} />} />
+        <IconButton onClick={shuffleWidgets} icon={<FiHome size={16} />} />
         <IconButton icon={<FiGrid size={16} />} />
         <IconButton icon={<FiSettings size={16} />} />
       </nav>
