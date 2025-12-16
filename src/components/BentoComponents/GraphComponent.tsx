@@ -13,8 +13,14 @@ export default function GraphComponent({
   showLegend = true,
   animate = true,
 }: GraphWidgetProps) {
-  const maxValue = useMemo(() => Math.max(...data.map((d: { value: number }) => d.value)), [data]);
-  const minValue = useMemo(() => Math.min(...data.map((d: { value: number }) => d.value)), [data]);
+  const maxValue = useMemo(
+    () => Math.max(...data.map((d: { value: number }) => d.value)),
+    [data]
+  );
+  const minValue = useMemo(
+    () => Math.min(...data.map((d: { value: number }) => d.value)),
+    [data]
+  );
 
   const normalizeValue = (value: number) => {
     if (maxValue === minValue) return 50;
@@ -69,7 +75,11 @@ export default function GraphComponent({
 
     return (
       <div className="relative h-full w-full p-2">
-        <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <svg
+          className="w-full h-full"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+        >
           {showGrid && (
             <g className="opacity-20">
               {[0, 25, 50, 75, 100].map((y) => (
@@ -141,7 +151,11 @@ export default function GraphComponent({
 
     return (
       <div className="relative h-full w-full p-2">
-        <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <svg
+          className="w-full h-full"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+        >
           {showGrid && (
             <g className="opacity-20">
               {[0, 25, 50, 75, 100].map((y) => (
@@ -188,7 +202,10 @@ export default function GraphComponent({
   };
 
   const renderPie = () => {
-    const total = data.reduce((sum: number, item: { value: number }) => sum + item.value, 0);
+    const total = data.reduce(
+      (sum: number, item: { value: number }) => sum + item.value,
+      0
+    );
     let currentAngle = -90;
 
     return (
@@ -217,7 +234,9 @@ export default function GraphComponent({
               <motion.path
                 key={item.label}
                 d={path}
-                fill={item.color || `hsl(${(index * 360) / data.length}, 70%, 60%)`}
+                fill={
+                  item.color || `hsl(${(index * 360) / data.length}, 70%, 60%)`
+                }
                 initial={animate ? { scale: 0, opacity: 0 } : undefined}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
@@ -225,7 +244,13 @@ export default function GraphComponent({
               />
             );
           })}
-          <circle cx="50" cy="50" r="20" fill="white" className="dark:fill-zinc-900" />
+          <circle
+            cx="50"
+            cy="50"
+            r="20"
+            fill="white"
+            className="dark:fill-zinc-900"
+          />
         </svg>
         {showLegend && (
           <div className="absolute bottom-2 left-2 right-2 flex flex-wrap gap-2 justify-center">
@@ -234,10 +259,14 @@ export default function GraphComponent({
                 <div
                   className="w-3 h-3 rounded-sm"
                   style={{
-                    backgroundColor: item.color || `hsl(${(index * 360) / data.length}, 70%, 60%)`,
+                    backgroundColor:
+                      item.color ||
+                      `hsl(${(index * 360) / data.length}, 70%, 60%)`,
                   }}
                 />
-                <span className="text-xs text-zinc-600 dark:text-zinc-400">{item.label}</span>
+                <span className="text-xs text-zinc-600 dark:text-zinc-400">
+                  {item.label}
+                </span>
               </div>
             ))}
           </div>

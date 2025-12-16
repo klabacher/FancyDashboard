@@ -4,7 +4,9 @@ import { z } from "zod";
 export const TextWidgetSchema = z.object({
   text: z.string().min(1, "Texto não pode estar vazio"),
   title: z.string().optional(),
-  variant: z.enum(["default", "heading", "subtitle", "caption"]).default("default"),
+  variant: z
+    .enum(["default", "heading", "subtitle", "caption"])
+    .default("default"),
   align: z.enum(["left", "center", "right"]).default("left"),
   color: z.string().optional(),
 });
@@ -38,13 +40,15 @@ export type ImageWidgetProps = z.infer<typeof ImageWidgetSchema>;
 export const GraphWidgetSchema = z.object({
   title: z.string().optional(),
   type: z.enum(["line", "bar", "area", "pie"]).default("line"),
-  data: z.array(
-    z.object({
-      label: z.string(),
-      value: z.number(),
-      color: z.string().optional(),
-    })
-  ).min(1, "Dados não podem estar vazios"),
+  data: z
+    .array(
+      z.object({
+        label: z.string(),
+        value: z.number(),
+        color: z.string().optional(),
+      })
+    )
+    .min(1, "Dados não podem estar vazios"),
   showGrid: z.boolean().default(true),
   showLegend: z.boolean().default(true),
   animate: z.boolean().default(true),
@@ -59,6 +63,8 @@ export type WidgetDescriptor<T = any> = {
   id: string | number;
   type: WidgetType;
   props: T;
+  // Page index (0-based) for pagination
+  page?: number;
   colSpan?: 1 | 2 | 3 | 4 | { mobile?: number; desktop?: number };
   rowSpan?: 1 | 2 | 3 | 4;
   onClick?: () => void;
@@ -86,7 +92,10 @@ export function validateWidgetProps(type: string, props: any) {
 
   const result = schema.safeParse(props);
   if (!result.success) {
-    console.error(`Validação falhou para widget tipo ${type}:`, result.error.flatten());
+    console.error(
+      `Validação falhou para widget tipo ${type}:`,
+      result.error.flatten()
+    );
     return { success: false, error: result.error };
   }
 

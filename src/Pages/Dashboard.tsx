@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import ComponentFactory, { WidgetDescriptor } from "@Components/BentoGrid";
-import { motion } from "framer-motion";
-import { FiHome, FiGrid, FiSettings, FiRefreshCw } from "react-icons/fi";
+import ComponentFactory from "@Components/BentoGrid";
+import { WidgetDescriptor } from "@Types/widgetSchemas";
 import { initializeBentoPlugins } from "@/Providers/BentoPlugins";
 import Header from "@Components/BentoGridHeader";
 

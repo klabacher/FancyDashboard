@@ -1,82 +1,95 @@
 import { motion } from "framer-motion";
-import { FiHome, FiGrid, FiSettings, FiRefreshCw } from "react-icons/fi";
+import {
+  FiHome,
+  FiGrid,
+  FiSettings,
+  FiChevronLeft,
+  FiChevronRight,
+} from "react-icons/fi";
+import { useDashboardStore } from "@State/dashboardStore";
 
-// TODO: Implementar funcionalidade de paginação real
 function Pager() {
-    return (
-        <div className="flex justify-center items-center py-2">
-            <div className="flex space-x-2">
-                <button className="w-3 h-3 rounded-full bg-zinc-300 aria-selected:bg-zinc-950"></button>
-                <button className="w-3 h-3 rounded-full bg-zinc-300 aria-selected:bg-zinc-950"></button>
-                <button className="w-3 h-3 rounded-full bg-zinc-300 aria-selected:bg-zinc-950"></button>
-            </div>
-        </div>
-    )
+  const { currentPage, totalPages, nextPage, prevPage, setCurrentPage } =
+    useDashboardStore();
+
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="flex items-center gap-4 bg-white/5 backdrop-blur-md rounded-full px-4 py-1.5 border border-white/10 shadow-lg">
+      <button
+        onClick={prevPage}
+        disabled={currentPage === 0}
+        className="text-zinc-400 hover:text-white disabled:opacity-30 transition-colors"
+      >
+        <FiChevronLeft size={16} />
+      </button>
+
+      <div className="flex space-x-2">
+        {Array.from({ length: totalPages }).map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setCurrentPage(idx)}
+            className={`
+                            h-1.5 rounded-full transition-all duration-300
+                            ${currentPage === idx ? "w-6 bg-white" : "w-1.5 bg-zinc-600 hover:bg-zinc-500"}
+                        `}
+          />
+        ))}
+      </div>
+
+      <button
+        onClick={nextPage}
+        disabled={currentPage === totalPages - 1}
+        className="text-zinc-400 hover:text-white disabled:opacity-30 transition-colors"
+      >
+        <FiChevronRight size={16} />
+      </button>
+    </div>
+  );
 }
 
-function Separator() {
-    return (
-        <div className="w-px h-6 bg-zinc-300 dark:bg-zinc-700 mx-2" />
-    )
+export default function BentoGridHeader({
+  shuffleWidgets,
+}: {
+  shuffleWidgets: () => void;
+}) {
+  return (
+    <header className="fixed top-0 left-0 right-0 h-16 z-50 flex items-center justify-between px-6 bg-gradient-to-b from-black/20 to-transparent pointer-events-none">
+      {/* Left: Minimal Branding or Empty for balance */}
+      <div className="w-24 pointer-events-auto">
+        <div className="w-3 h-3 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
+      </div>
+
+      {/* Center: The Pager (The Import) */}
+      <div className="pointer-events-auto">
+        <Pager />
+      </div>
+
+      {/* Right: Actions (Subtle) */}
+      <nav className="flex items-center gap-2 pointer-events-auto">
+        <IconButton icon={<FiHome size={16} />} />
+        <IconButton icon={<FiGrid size={16} />} />
+        <IconButton icon={<FiSettings size={16} />} />
+      </nav>
+    </header>
+  );
 }
 
-export default function BentoGridHeader(
-    { shuffleWidgets }: { shuffleWidgets: () => void }
-) {
-    return (
-        <header className="sticky w-auto h-auto top-0 z-50">
-            <div className="w-auto h-auto mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-center items-center h-16 gap-1.5">
-                    {/* Navigation */}
-                    <nav className="flex items-center gap-1.5">
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex items-center text-white gap-2 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-                        >
-                            <FiHome size={18} />
-                        </motion.button>
-                        <Separator />
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex items-center text-white gap-2 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-                        >
-                            <FiGrid size={18} />
-                        </motion.button>
-                        <Separator />
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex items-center text-white gap-2 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-                        >
-                            <FiSettings size={18} />
-                        </motion.button>
-                    </nav>
-
-                    {/* Actions */}
-                    {/* <div className="flex items-center gap-3">
-                        <motion.button
-                            whileHover={{ scale: 1.05, rotate: 180 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={shuffleWidgets}
-                            className="p-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
-                            title="Reorganizar widgets"
-                        >
-                            <FiRefreshCw size={18} />
-                        </motion.button>
-                        <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={addWidget}
-                        className="px-4 py-2 rounded-lg bg-blue-500 text-white text-sm font-medium hover:bg-blue-600 transition-colors"
-                      >
-                        <FiSettings size={18} />
-                      </motion.button>
-                    </div> */}
-                </div>
-            </div>
-            <Pager />
-        </header>
-    )
+function IconButton({
+  icon,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  onClick?: () => void;
+}) {
+  return (
+    <motion.button
+      whileHover={{ scale: 1.1, backgroundColor: "rgba(255,255,255,0.1)" }}
+      whileTap={{ scale: 0.9 }}
+      onClick={onClick}
+      className="p-2 rounded-full text-zinc-400 hover:text-white transition-colors"
+    >
+      {icon}
+    </motion.button>
+  );
 }

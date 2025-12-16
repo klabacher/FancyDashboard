@@ -1,6 +1,6 @@
 /**
  * Plugin Example: Custom Counter Widget
- * 
+ *
  * Este arquivo demonstra como criar e registrar um widget customizado
  * que pode ser usado através do pseudo-DOM (lista de WidgetDescriptor)
  */
@@ -47,12 +47,31 @@ export function CounterWidget({
     setCount((prev) => prev - step);
   };
 
-  const colorClasses: Record<string, { bg: string; text: string; hover: string }> = {
-    blue: { bg: "bg-blue-500", text: "text-blue-600", hover: "hover:bg-blue-600" },
-    green: { bg: "bg-green-500", text: "text-green-600", hover: "hover:bg-green-600" },
+  const colorClasses: Record<
+    string,
+    { bg: string; text: string; hover: string }
+  > = {
+    blue: {
+      bg: "bg-blue-500",
+      text: "text-blue-600",
+      hover: "hover:bg-blue-600",
+    },
+    green: {
+      bg: "bg-green-500",
+      text: "text-green-600",
+      hover: "hover:bg-green-600",
+    },
     red: { bg: "bg-red-500", text: "text-red-600", hover: "hover:bg-red-600" },
-    purple: { bg: "bg-purple-500", text: "text-purple-600", hover: "hover:bg-purple-600" },
-    orange: { bg: "bg-orange-500", text: "text-orange-600", hover: "hover:bg-orange-600" },
+    purple: {
+      bg: "bg-purple-500",
+      text: "text-purple-600",
+      hover: "hover:bg-purple-600",
+    },
+    orange: {
+      bg: "bg-orange-500",
+      text: "text-orange-600",
+      hover: "hover:bg-orange-600",
+    },
   };
 
   const colors = colorClasses[color];
@@ -64,14 +83,16 @@ export function CounterWidget({
           {title}
         </h3>
       )}
-      
+
       <div className="flex flex-col items-center gap-4">
         {/* Display */}
-        <div className={cn(
-          "text-6xl font-bold transition-colors",
-          colors.text,
-          "dark:text-white"
-        )}>
+        <div
+          className={cn(
+            "text-6xl font-bold transition-colors",
+            colors.text,
+            "dark:text-white"
+          )}
+        >
           {count}
         </div>
 
