@@ -56,8 +56,44 @@ export const GraphWidgetSchema = z.object({
 
 export type GraphWidgetProps = z.infer<typeof GraphWidgetSchema>;
 
+// -------------------- Widget Constraints Schema --------------------
+export const WidgetConstraintsSchema = z.object({
+  resizable: z.boolean().default(false),
+  minW: z.number().int().min(1).max(4).optional(),
+  maxW: z.number().int().min(1).max(4).optional(),
+  minH: z.number().int().min(1).max(4).optional(),
+  maxH: z.number().int().min(1).max(4).optional(),
+  lockedAspect: z.boolean().optional(),
+});
+
+export type WidgetConstraints = z.infer<typeof WidgetConstraintsSchema>;
+
+// -------------------- Widget Position Schema --------------------
+export const WidgetPositionSchema = z.object({
+  x: z.number().int().min(0), // Column position (0-based)
+  y: z.number().int().min(0), // Row position (0-based)
+});
+
+export type WidgetPosition = z.infer<typeof WidgetPositionSchema>;
+
+// -------------------- Widget Size Types --------------------
+export type WidgetSize = "1x1" | "1x2" | "2x1" | "2x2" | "2x3" | "3x2" | "4x2";
+
+export const WidgetSizeSchema = z.enum(["1x1", "1x2", "2x1", "2x2", "2x3", "3x2", "4x2"]);
+
+// Helper to parse size string to dimensions
+export function parseSizeToDimensions(size: WidgetSize): { w: number; h: number } {
+  const [w, h] = size.split("x").map(Number);
+  return { w, h };
+}
+
+// Helper to create size string from dimensions
+export function dimensionsToSize(w: number, h: number): WidgetSize {
+  return `${w}x${h}` as WidgetSize;
+}
+
 // -------------------- Widget Descriptor com tipo genérico --------------------
-export type WidgetType = "text" | "textarea" | "image" | "graph" | string;
+export type WidgetType = "text" | "textarea" | "image" | "graph" | "icon-app" | string;
 
 export type WidgetDescriptor<T = any> = {
   id: string | number;
@@ -65,11 +101,74 @@ export type WidgetDescriptor<T = any> = {
   props: T;
   // Page index (0-based) for pagination
   page?: number;
+  // Grid positioning (new)
+  position?: WidgetPosition;
+  size?: WidgetSize;
+  // Legacy span support (deprecated, use size instead)
   colSpan?: 1 | 2 | 3 | 4 | { mobile?: number; desktop?: number };
   rowSpan?: 1 | 2 | 3 | 4;
+  // Constraint system (new)
+  constraints?: WidgetConstraints;
+  // Interaction
   onClick?: () => void;
+  onResize?: (size: WidgetSize) => void;
   className?: string;
+  // State flags
+  isDragging?: boolean;
+  isResizing?: boolean;
 };
+
+// -------------------- Default Constraints by Widget Type --------------------
+export const defaultConstraintsByType: Record<string, WidgetConstraints> = {
+  "icon-app": {
+    resizable: false,
+    minW: 1,
+    maxW: 1,
+    minH: 1,
+    maxH: 1,
+    lockedAspect: true,
+  },
+  "text": {
+    resizable: true,
+    minW: 1,
+    maxW: 4,
+    minH: 1,
+    maxH: 2,
+  },
+  "textarea": {
+    resizable: true,
+    minW: 1,
+    maxW: 4,
+    minH: 1,
+    maxH: 4,
+  },
+  "image": {
+    resizable: true,
+    minW: 1,
+    maxW: 4,
+    minH: 1,
+    maxH: 4,
+    lockedAspect: true,
+  },
+  "graph": {
+    resizable: true,
+    minW: 2,
+    maxW: 4,
+    minH: 2,
+    maxH: 4,
+  },
+};
+
+// Helper to get constraints for a widget type
+export function getDefaultConstraints(type: WidgetType): WidgetConstraints {
+  return defaultConstraintsByType[type] || {
+    resizable: true,
+    minW: 1,
+    maxW: 4,
+    minH: 1,
+    maxH: 4,
+  };
+}
 
 // -------------------- Schema Registry --------------------
 export const widgetSchemaRegistry = new Map<string, z.ZodSchema>([

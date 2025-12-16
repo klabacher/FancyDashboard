@@ -10,8 +10,11 @@
     "tauri": "tauri",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "lint:ci": "eslint . --max-warnings=0",
     "test": "vitest",
-    "format": "prettier --write ."
+    "test:ci": "vitest run",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "^5.1.0",

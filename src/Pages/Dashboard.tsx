@@ -8,8 +8,8 @@ const INITIAL_WIDGETS: WidgetDescriptor[] = [
   {
     id: "text-1",
     type: "text",
-    colSpan: 2,
-    rowSpan: 1,
+    size: "2x1",
+    position: { x: 0, y: 0 },
     props: {
       text: "Dashboard de Demonstração",
       title: "Boas-vindas",
@@ -20,8 +20,8 @@ const INITIAL_WIDGETS: WidgetDescriptor[] = [
   {
     id: "text-2",
     type: "text",
-    colSpan: 1,
-    rowSpan: 1,
+    size: "1x1",
+    position: { x: 2, y: 0 },
     props: {
       text: "Sistema online e operacional",
       variant: "subtitle",
@@ -32,8 +32,8 @@ const INITIAL_WIDGETS: WidgetDescriptor[] = [
   {
     id: "text-3",
     type: "text",
-    colSpan: 1,
-    rowSpan: 1,
+    size: "1x1",
+    position: { x: 3, y: 0 },
     props: {
       text: "Última atualização: 15/12/2025",
       variant: "caption",
@@ -46,8 +46,8 @@ const INITIAL_WIDGETS: WidgetDescriptor[] = [
   {
     id: "graph-1",
     type: "graph",
-    colSpan: 2,
-    rowSpan: 2,
+    size: "2x2",
+    position: { x: 0, y: 1 },
     props: {
       title: "Vendas Mensais",
       type: "bar",
@@ -67,8 +67,8 @@ const INITIAL_WIDGETS: WidgetDescriptor[] = [
   {
     id: "graph-2",
     type: "graph",
-    colSpan: 2,
-    rowSpan: 2,
+    size: "2x2",
+    position: { x: 2, y: 1 },
     props: {
       title: "Performance Semanal",
       type: "line",
@@ -89,8 +89,8 @@ const INITIAL_WIDGETS: WidgetDescriptor[] = [
   {
     id: "graph-3",
     type: "graph",
-    colSpan: 1,
-    rowSpan: 2,
+    size: "1x2",
+    position: { x: 0, y: 3 },
     props: {
       title: "Distribuição",
       type: "pie",
@@ -107,8 +107,8 @@ const INITIAL_WIDGETS: WidgetDescriptor[] = [
   {
     id: "graph-4",
     type: "graph",
-    colSpan: 1,
-    rowSpan: 2,
+    size: "1x2",
+    position: { x: 1, y: 3 },
     props: {
       title: "Crescimento",
       type: "area",
@@ -127,8 +127,8 @@ const INITIAL_WIDGETS: WidgetDescriptor[] = [
   {
     id: "image-1",
     type: "image",
-    colSpan: 2,
-    rowSpan: 2,
+    size: "2x2",
+    position: { x: 2, y: 3 },
     props: {
       src: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800",
       alt: "Analytics Dashboard",
@@ -143,8 +143,8 @@ const INITIAL_WIDGETS: WidgetDescriptor[] = [
   {
     id: "textarea-1",
     type: "textarea",
-    colSpan: 2,
-    rowSpan: 2,
+    size: "2x2",
+    position: { x: 0, y: 5 },
     props: {
       content:
         "Esta é uma demonstração completa do sistema de widgets.\n\nRecursos:\n• Validação automática de props com Zod\n• Animações suaves com Framer Motion\n• Sistema de plugins extensível\n• Layout responsivo e adaptativo\n• Dark mode integrado\n\nTodos os componentes são totalmente tipados e validados em runtime.",
@@ -155,8 +155,8 @@ const INITIAL_WIDGETS: WidgetDescriptor[] = [
   {
     id: "textarea-2",
     type: "textarea",
-    colSpan: 2,
-    rowSpan: 2,
+    size: "2x2",
+    position: { x: 2, y: 5 },
     props: {
       content: "Digite suas observações aqui...",
       title: "Editor de Texto",
@@ -170,8 +170,8 @@ const INITIAL_WIDGETS: WidgetDescriptor[] = [
   {
     id: "text-4",
     type: "text",
-    colSpan: 1,
-    rowSpan: 1,
+    size: "1x1",
+    position: { x: 0, y: 7 },
     props: {
       text: "R$ 124.500",
       title: "Receita Total",
@@ -183,8 +183,8 @@ const INITIAL_WIDGETS: WidgetDescriptor[] = [
   {
     id: "text-5",
     type: "text",
-    colSpan: 1,
-    rowSpan: 1,
+    size: "1x1",
+    position: { x: 1, y: 7 },
     props: {
       text: "+2.4k usuários",
       title: "Crescimento",
@@ -198,8 +198,8 @@ const INITIAL_WIDGETS: WidgetDescriptor[] = [
   {
     id: "counter-1",
     type: "counter",
-    colSpan: 1,
-    rowSpan: 2,
+    size: "1x2",
+    position: { x: 2, y: 7 },
     props: {
       title: "Contador Interativo",
       initialValue: 42,
@@ -212,8 +212,8 @@ const INITIAL_WIDGETS: WidgetDescriptor[] = [
   {
     id: "counter-2",
     type: "counter",
-    colSpan: 1,
-    rowSpan: 2,
+    size: "1x2",
+    position: { x: 3, y: 7 },
     props: {
       title: "Progresso",
       initialValue: 75,
@@ -236,26 +236,6 @@ export default function Dashboard() {
   // Shuffle widgets para demonstrar animações
   const shuffleWidgets = () => {
     setWidgets((prev) => [...prev].sort(() => Math.random() - 0.5));
-  };
-
-  // Adicionar um novo widget dinamicamente
-  const addWidget = () => {
-    const newWidget: WidgetDescriptor = {
-      id: `dynamic-${Date.now()}`,
-      type: "text",
-      colSpan: 1,
-      rowSpan: 1,
-      props: {
-        text: `Widget #${widgets.length + 1}`,
-        title: "Novo Widget",
-        variant: "default",
-        align: "center",
-      },
-      onClick: () => {
-        alert("Widget clicado!");
-      },
-    };
-    setWidgets((prev) => [...prev, newWidget]);
   };
 
   return (
