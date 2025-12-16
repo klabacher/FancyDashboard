@@ -1,8 +1,32 @@
 @import "tailwindcss";
 
-/* ═══════════════════════════════════════════════════════════════
-   SPATIAL GLASS DESIGN SYSTEM - Global Styles
-   ═══════════════════════════════════════════════════════════════ */
+@layer base {
+  :root {
+    /* tema padrão (light) */
+    --color-bg: 248 250 252;
+    --color-text: 15 23 42;
+    --color-primary: 59 130 246;
+    --color-secondary: 37 99 235;
+
+    /* tamanho da célula do bento grid (px) */
+    --bento-row-height: 80;
+    --bento-cols: 10;
+  }
+
+  [data-theme="dark"] {
+    --color-bg: 15 23 42;
+    --color-text: 248 250 252;
+    --color-primary: 244 114 182;
+    --color-secondary: 219 39 119;
+  }
+
+  [data-theme="emerald"] {
+    --color-bg: 6 78 59;
+    --color-text: 236 253 245;
+    --color-primary: 16 185 129;
+    --color-secondary: 45 212 191;
+  }
+}
 
 *,
 *::before,
@@ -58,217 +82,4 @@ body {
   flex-direction: column;
   /* Transparent container */
   background: transparent;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   SPATIAL GLASS - Custom Scrollbar
-   ═══════════════════════════════════════════════════════════════ */
-
-/* WebKit Scrollbar (Chrome, Safari, Edge) */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
-  transition: background 0.2s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-::-webkit-scrollbar-corner {
-  background: transparent;
-}
-
-/* Firefox Scrollbar */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
-}
-
-/* Hide scrollbar utility */
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   SPATIAL GLASS - Typography Hierarchy
-   ═══════════════════════════════════════════════════════════════ */
-
-/* Headings - Bright for emphasis */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: rgba(255, 255, 255, 0.95);
-}
-
-/* Body text - Slightly muted for readability */
-p,
-span,
-div {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-/* Muted text utility */
-.text-muted {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-/* Label text - Very muted for hierarchy */
-.text-label {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: rgba(255, 255, 255, 0.4);
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   SPATIAL GLASS - Selection Styles
-   ═══════════════════════════════════════════════════════════════ */
-
-::selection {
-  background: rgba(99, 102, 241, 0.4);
-  color: white;
-}
-
-::-moz-selection {
-  background: rgba(99, 102, 241, 0.4);
-  color: white;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   SPATIAL GLASS - Focus States
-   ═══════════════════════════════════════════════════════════════ */
-
-:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.3);
-  outline-offset: 2px;
-  border-radius: 8px;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   SPATIAL GLASS - Animation Utilities
-   ═══════════════════════════════════════════════════════════════ */
-
-/* Smooth transitions for all interactive elements */
-button,
-a,
-[role="button"] {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Reduced motion preference */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   SPATIAL GLASS - Glass Effect Utilities
-   ═══════════════════════════════════════════════════════════════ */
-
-/* Glass surface base */
-.glass-surface {
-  background: rgba(24, 24, 27, 0.25);
-  backdrop-filter: blur(40px) saturate(150%);
-  -webkit-backdrop-filter: blur(40px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.37),
-    inset 0 1px 1px rgba(255, 255, 255, 0.1);
-}
-
-/* Glass surface hover */
-.glass-surface:hover {
-  background: rgba(24, 24, 27, 0.35);
-  border-color: rgba(255, 255, 255, 0.12);
-}
-
-/* Glass shine effect */
-.glass-shine {
-  position: relative;
-}
-
-.glass-shine::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
-  pointer-events: none;
-}
-
-/* Deep frost variant */
-.glass-frost {
-  background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(64px) saturate(180%);
-  -webkit-backdrop-filter: blur(64px) saturate(180%);
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   SPATIAL GLASS - Grid Utilities
-   ═══════════════════════════════════════════════════════════════ */
-
-/* Ensure grid items don't overflow */
-.grid > * {
-  min-width: 0;
-  min-height: 0;
-}
-
-/* Grid drag ghost */
-.grid-drag-ghost {
-  position: absolute;
-  border: 2px dashed rgba(255, 255, 255, 0.3);
-  border-radius: 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  pointer-events: none;
-  z-index: 100;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   TAURI - Window Drag Region
-   ═══════════════════════════════════════════════════════════════ */
-
-/* Allow dragging the window from header area */
-[data-tauri-drag-region] {
-  -webkit-app-region: drag;
-}
-
-[data-tauri-drag-region] button,
-[data-tauri-drag-region] a,
-[data-tauri-drag-region] input {
-  -webkit-app-region: no-drag;
 }

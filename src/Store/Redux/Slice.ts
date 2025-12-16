@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from "@Store/Redux/Store";
 
 interface AppState {
   theme: "light" | "dark";
@@ -20,5 +19,8 @@ export const appSlice = createSlice({
 });
 
 export const { setTheme } = appSlice.actions;
-export const selectTheme = (state: RootState) => state.app.theme;
+
+// Em vez de importar RootState da Store, defina o seletor assim:
+export const selectTheme = (state: { app: AppState }) => state.app.theme;
+
 export default appSlice.reducer;

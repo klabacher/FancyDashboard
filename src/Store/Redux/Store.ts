@@ -1,30 +1,43 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { persistStore } from "redux-persist";
-import appReducer from "@Store/Redux/Slice";
-import sanitizeMiddleware from "./sanitizeMiddleware";
+// Store.ts
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import appReducer from "./Slice"; // Ajuste o caminho conforme seu projeto
 
-const store = configureStore({
-  reducer: {
-    app: appReducer,
-  },
+const rootReducer = combineReducers({
+  app: appReducer,
+});
+
+const persistConfig = {
+  key: "root",
+  version: 1,
+  storage,
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+export const store = configureStore({
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        // temporarily ignore common register paths during migration; sanitizeMiddleware will
-        // remove functions and replace them with serializable references.
-        ignoredActionPaths: [
-          "payload.register",
-          "register",
-          "payload.__fnRef",
-          "payload.*.__fnRef",
-        ],
+        // Necessário para ignorar erros de serialização do redux-persist
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).prepend(sanitizeMiddleware),
+    }),
 });
 
-const persistor = persistStore(store);
+export const persistor = persistStore(store);
 
+// Exportar os tipos para uso nos componentes e hooks customizados
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-
-export { store, persistor };
