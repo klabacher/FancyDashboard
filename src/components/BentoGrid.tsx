@@ -31,7 +31,7 @@ export const BentoGrid = ({ children, className }: BentoGridProps) => {
         // - Desktop: 4 colunas (padrão Bento moderno)
         // - auto-rows: Define a altura base de cada 'bloco' (ex: 140px)
         // - dense: A MAGIA. Faz itens pequenos subirem para preencher buracos.
-        "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-7xl mx-auto",
+        "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-screen max-h-screen mx-auto",
         "auto-rows-[160px]", // Altura fixa da "célula". Ajuste conforme seu design.
         "grid-flow-row-dense",
         className
@@ -123,7 +123,7 @@ export const BentoItem = ({
 
 // -------------------- Factory & Registry --------------------
 
-export type ComponentType = "text" | "textarea" | "image" | "graph" | string;
+export type ComponentType = "text" | "textarea" | "image" | "graph" | "icon-app" | string;
 
 export type WidgetDescriptor<T = any> = {
   id: string | number;

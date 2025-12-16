@@ -260,10 +260,11 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-transparent">
+    <div className="min-h-screen w-full bg-black/40">
       <Header shuffleWidgets={shuffleWidgets} />
 
-      <main className="bg-transparent p-1">
+      <main className="min-h-screen w-full bg-black/40 p-1">
+        {/* TODO: Add settings to add or not backgound and etc */}
         <ComponentFactory items={widgets} validateProps={true} />
       </main>
     </div>
