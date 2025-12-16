@@ -29,8 +29,20 @@ describe("dashboard layout store", () => {
     const { setWidgets, checkCollision } = useDashboardStore.getState();
 
     setWidgets([
-      { id: "a", type: "text", size: "2x1", position: { x: 0, y: 0 }, props: {} },
-      { id: "b", type: "text", size: "1x1", position: { x: 1, y: 0 }, props: {} },
+      {
+        id: "a",
+        type: "text",
+        size: "2x1",
+        position: { x: 0, y: 0 },
+        props: {},
+      },
+      {
+        id: "b",
+        type: "text",
+        size: "1x1",
+        position: { x: 1, y: 0 },
+        props: {},
+      },
     ]);
 
     const collides = checkCollision("a", { x: 1, y: 0 }, "2x1");
@@ -44,7 +56,13 @@ describe("dashboard layout store", () => {
     const { setWidgets, canResize } = useDashboardStore.getState();
 
     setWidgets([
-      { id: "g", type: "graph", size: "2x2", position: { x: 0, y: 0 }, props: {} },
+      {
+        id: "g",
+        type: "graph",
+        size: "2x2",
+        position: { x: 0, y: 0 },
+        props: {},
+      },
     ]);
 
     // Graph requires at least 2x2

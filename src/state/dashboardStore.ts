@@ -1,12 +1,12 @@
 import { create } from "zustand";
 import { DashboardState } from "@Types/stateZustand";
-import { 
-  WidgetDescriptor, 
-  WidgetSize, 
-  WidgetPosition, 
+import {
+  WidgetDescriptor,
+  WidgetSize,
+  WidgetPosition,
   WidgetConstraints,
   parseSizeToDimensions,
-  getDefaultConstraints 
+  getDefaultConstraints,
 } from "@/Types/widgetSchemas";
 
 // -------------------- Grid Configuration --------------------
@@ -43,24 +43,34 @@ interface ExtendedDashboardState extends DashboardState {
 
   // Widget Layout State
   layout: WidgetLayoutState;
-  
+
   // Widget Actions
   setActiveWidget: (id: string | number | null) => void;
   setDraggedWidget: (id: string | number | null) => void;
   setResizingWidget: (id: string | number | null) => void;
   setHoveredWidget: (id: string | number | null) => void;
-  
+
   // Widget CRUD
   setWidgets: (widgets: WidgetDescriptor[]) => void;
   updateWidgetPosition: (id: string | number, position: WidgetPosition) => void;
   updateWidgetSize: (id: string | number, size: WidgetSize) => void;
-  updateWidgetConstraints: (id: string | number, constraints: Partial<WidgetConstraints>) => void;
+  updateWidgetConstraints: (
+    id: string | number,
+    constraints: Partial<WidgetConstraints>
+  ) => void;
   swapWidgetPositions: (id1: string | number, id2: string | number) => void;
-  
+
   // Collision Detection
-  checkCollision: (id: string | number, newPosition: WidgetPosition, newSize?: WidgetSize) => boolean;
-  findAvailablePosition: (size: WidgetSize, startFrom?: WidgetPosition) => WidgetPosition | null;
-  
+  checkCollision: (
+    id: string | number,
+    newPosition: WidgetPosition,
+    newSize?: WidgetSize
+  ) => boolean;
+  findAvailablePosition: (
+    size: WidgetSize,
+    startFrom?: WidgetPosition
+  ) => WidgetPosition | null;
+
   // Resize Validation
   canResize: (id: string | number, newSize: WidgetSize) => boolean;
 }
@@ -173,17 +183,18 @@ export const useDashboardStore = create<ExtendedDashboardState>((set, get) => ({
     set((state) => ({
       layout: {
         ...state.layout,
-        widgets: state.layout.widgets.map((w): WidgetDescriptor =>
-          w.id === id
-            ? { 
-                ...w, 
-                constraints: { 
-                  resizable: w.constraints?.resizable ?? false,
-                  ...w.constraints, 
-                  ...constraints 
-                } as WidgetConstraints
-              }
-            : w
+        widgets: state.layout.widgets.map(
+          (w): WidgetDescriptor =>
+            w.id === id
+              ? {
+                  ...w,
+                  constraints: {
+                    resizable: w.constraints?.resizable ?? false,
+                    ...w.constraints,
+                    ...constraints,
+                  } as WidgetConstraints,
+                }
+              : w
         ),
       },
     })),
@@ -296,7 +307,8 @@ export const useDashboardStore = create<ExtendedDashboardState>((set, get) => ({
     if (!widget || !widget.position) return false;
 
     // Check constraints
-    const constraints = widget.constraints || getDefaultConstraints(String(widget.type));
+    const constraints =
+      widget.constraints || getDefaultConstraints(String(widget.type));
     const { w, h } = parseSizeToDimensions(newSize);
 
     if (constraints.minW && w < constraints.minW) return false;

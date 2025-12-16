@@ -42,27 +42,27 @@ const sizeToSpan: Record<WidgetSize, string> = {
 
 // -------------------- Animation Variants --------------------
 const widgetVariants = {
-  initial: { 
-    opacity: 0, 
+  initial: {
+    opacity: 0,
     scale: 0.92,
     y: 12,
   },
-  animate: { 
-    opacity: 1, 
+  animate: {
+    opacity: 1,
     scale: 1,
     y: 0,
   },
-  exit: { 
-    opacity: 0, 
+  exit: {
+    opacity: 0,
     scale: 0.95,
     y: -8,
   },
   hover: {
     scale: 1.01,
-    transition: { 
-      type: "spring", 
-      stiffness: 400, 
-      damping: 25 
+    transition: {
+      type: "spring",
+      stiffness: 400,
+      damping: 25,
     },
   },
   tap: {
@@ -77,7 +77,11 @@ interface ResizeHandleProps {
   visible: boolean;
 }
 
-const ResizeHandle = ({ position, onMouseDown, visible }: ResizeHandleProps) => {
+const ResizeHandle = ({
+  position,
+  onMouseDown,
+  visible,
+}: ResizeHandleProps) => {
   const positionStyles: Record<string, string> = {
     se: "bottom-0 right-0 cursor-se-resize",
     sw: "bottom-0 left-0 cursor-sw-resize",

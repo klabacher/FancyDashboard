@@ -55,21 +55,21 @@ interface BentoItemProps {
 
 // -------------------- Animation Variants --------------------
 const gridItemVariants = {
-  initial: { 
-    opacity: 0, 
-    scale: 0.9, 
+  initial: {
+    opacity: 0,
+    scale: 0.9,
     y: 16,
     filter: "blur(8px)",
   },
-  animate: { 
-    opacity: 1, 
-    scale: 1, 
+  animate: {
+    opacity: 1,
+    scale: 1,
     y: 0,
     filter: "blur(0px)",
   },
-  exit: { 
-    opacity: 0, 
-    scale: 0.95, 
+  exit: {
+    opacity: 0,
+    scale: 0.95,
     y: -12,
     filter: "blur(4px)",
   },
@@ -82,8 +82,8 @@ const gridItemVariants = {
 
 const dropIndicatorVariants = {
   hidden: { opacity: 0, scale: 0.9 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     scale: 1,
     transition: { type: "spring", stiffness: 500, damping: 30 },
   },
@@ -199,7 +199,8 @@ export const BentoItem = memo(function BentoItem({
   const [isDraggingInternal, setIsDraggingInternal] = useState(false);
 
   const size = widget.size || legacyToSize(widget.colSpan, widget.rowSpan);
-  const constraints = widget.constraints || getDefaultConstraints(String(widget.type));
+  const constraints =
+    widget.constraints || getDefaultConstraints(String(widget.type));
   const isActive = layout.activeWidgetId === widget.id;
   const isDragging = layout.draggedWidgetId === widget.id;
   const isHovered = layout.hoveredWidgetId === widget.id;
@@ -240,7 +241,10 @@ export const BentoItem = memo(function BentoItem({
   }, [setDraggedWidget, onDragEnd]);
 
   const handleDrag = useCallback(
-    (_: MouseEvent | TouchEvent | PointerEvent, info: { point: { x: number; y: number } }) => {
+    (
+      _: MouseEvent | TouchEvent | PointerEvent,
+      info: { point: { x: number; y: number } }
+    ) => {
       const targetPos = computeGridPosition(info.point.x, info.point.y);
       if (!targetPos) return;
 
@@ -252,7 +256,14 @@ export const BentoItem = memo(function BentoItem({
         updateWidgetPosition(widget.id, targetPos);
       }
     },
-    [computeGridPosition, widget.position, widget.id, checkCollision, size, updateWidgetPosition]
+    [
+      computeGridPosition,
+      widget.position,
+      widget.id,
+      checkCollision,
+      size,
+      updateWidgetPosition,
+    ]
   );
 
   const handleClick = useCallback(() => {
@@ -280,12 +291,23 @@ export const BentoItem = memo(function BentoItem({
         const relX = ev.clientX - rect.left;
         const relY = ev.clientY - rect.top;
 
-        const newW = clamp(Math.ceil(relX / totalCellW) - startPos.x, 1, columns - startPos.x);
-        const newH = clamp(Math.ceil(relY / totalCellH) - startPos.y, 1, rows - startPos.y);
+        const newW = clamp(
+          Math.ceil(relX / totalCellW) - startPos.x,
+          1,
+          columns - startPos.x
+        );
+        const newH = clamp(
+          Math.ceil(relY / totalCellH) - startPos.y,
+          1,
+          rows - startPos.y
+        );
 
         const candidateSize = `${newW}x${newH}` as WidgetSize;
 
-        if (candidateSize !== `${startSize.w}x${startSize.h}` && canResize(widget.id, candidateSize)) {
+        if (
+          candidateSize !== `${startSize.w}x${startSize.h}` &&
+          canResize(widget.id, candidateSize)
+        ) {
           updateWidgetSize(widget.id, candidateSize);
           onResize?.(candidateSize);
         }
@@ -300,7 +322,18 @@ export const BentoItem = memo(function BentoItem({
       window.addEventListener("mousemove", onMove);
       window.addEventListener("mouseup", onUp);
     },
-    [constraints.resizable, setResizingWidget, widget.id, size, widget.position, gridConfig, gridRef, canResize, updateWidgetSize, onResize]
+    [
+      constraints.resizable,
+      setResizingWidget,
+      widget.id,
+      size,
+      widget.position,
+      gridConfig,
+      gridRef,
+      canResize,
+      updateWidgetSize,
+      onResize,
+    ]
   );
 
   return (
@@ -323,9 +356,9 @@ export const BentoItem = memo(function BentoItem({
       onHoverStart={() => setHoveredWidget(widget.id)}
       onHoverEnd={() => setHoveredWidget(null)}
       transition={{
-        layout: { 
-          type: "spring", 
-          stiffness: 350, 
+        layout: {
+          type: "spring",
+          stiffness: 350,
           damping: 30,
           mass: 0.8,
         },
@@ -342,7 +375,8 @@ export const BentoItem = memo(function BentoItem({
         constraints.resizable !== false ? "cursor-grab" : "cursor-pointer",
         isDragging && "cursor-grabbing z-50",
         // Selection ring
-        isActive && "ring-2 ring-white/20 ring-offset-2 ring-offset-transparent",
+        isActive &&
+          "ring-2 ring-white/20 ring-offset-2 ring-offset-transparent",
         className
       )}
       style={{
@@ -352,9 +386,7 @@ export const BentoItem = memo(function BentoItem({
         gridRowEnd: "span " + parseSizeToDimensions(size).h,
       }}
     >
-      <div className="h-full w-full">
-        {children}
-      </div>
+      <div className="h-full w-full">{children}</div>
 
       {constraints.resizable !== false && (
         <div
@@ -390,7 +422,10 @@ export const BentoItem = memo(function BentoItem({
 // -------------------- Widget Registry --------------------
 const widgetRegistry = new Map<string, React.ComponentType<any>>();
 
-export function registerWidget(type: string, component: React.ComponentType<any>) {
+export function registerWidget(
+  type: string,
+  component: React.ComponentType<any>
+) {
   widgetRegistry.set(type, component);
 }
 
@@ -420,22 +455,24 @@ const MissingWidget: React.FC<{ type: string }> = memo(({ type }) => (
 ));
 MissingWidget.displayName = "MissingWidget";
 
-const ErrorWidget: React.FC<{ type: string; error: string }> = memo(({ type, error }) => (
-  <div
-    className={cn(
-      "w-full h-full flex flex-col items-center justify-center p-4 gap-2",
-      "bg-red-500/10 backdrop-blur-xl",
-      "border border-red-500/20 rounded-4xl"
-    )}
-  >
-    <span className="text-red-400 font-bold text-xs uppercase tracking-wider">
-      Erro: {type}
-    </span>
-    <p className="text-[10px] text-red-300/70 text-center font-mono">
-      {error}
-    </p>
-  </div>
-));
+const ErrorWidget: React.FC<{ type: string; error: string }> = memo(
+  ({ type, error }) => (
+    <div
+      className={cn(
+        "w-full h-full flex flex-col items-center justify-center p-4 gap-2",
+        "bg-red-500/10 backdrop-blur-xl",
+        "border border-red-500/20 rounded-4xl"
+      )}
+    >
+      <span className="text-red-400 font-bold text-xs uppercase tracking-wider">
+        Erro: {type}
+      </span>
+      <p className="text-[10px] text-red-300/70 text-center font-mono">
+        {error}
+      </p>
+    </div>
+  )
+);
 ErrorWidget.displayName = "ErrorWidget";
 
 // -------------------- Component Factory --------------------
@@ -459,7 +496,10 @@ export default function ComponentFactory({
 
   // Calculate total pages
   useEffect(() => {
-    const maxPage = items.reduce((max, item) => Math.max(max, item.page || 0), 0);
+    const maxPage = items.reduce(
+      (max, item) => Math.max(max, item.page || 0),
+      0
+    );
     setTotalPages(maxPage + 1);
   }, [items, setTotalPages]);
 
@@ -482,11 +522,15 @@ export default function ComponentFactory({
       <BentoGrid className={gridClassName}>
         {visibleItems.map((widget) => {
           const Comp = getRegisteredWidget(String(widget.type));
-          const size = widget.size || legacyToSize(widget.colSpan, widget.rowSpan);
+          const size =
+            widget.size || legacyToSize(widget.colSpan, widget.rowSpan);
 
           if (!Comp) {
             return (
-              <BentoItem key={`${widget.id}-${size}`} widget={{ ...widget, size }}>
+              <BentoItem
+                key={`${widget.id}-${size}`}
+                widget={{ ...widget, size }}
+              >
                 <MissingWidget type={String(widget.type)} />
               </BentoItem>
             );
@@ -494,13 +538,21 @@ export default function ComponentFactory({
 
           let validatedProps = widget.props || {};
           if (validateProps) {
-            const validation = validateWidgetProps(String(widget.type), widget.props);
+            const validation = validateWidgetProps(
+              String(widget.type),
+              widget.props
+            );
             if (!validation.success) {
               return (
-                <BentoItem key={`${widget.id}-${size}`} widget={{ ...widget, size }}>
+                <BentoItem
+                  key={`${widget.id}-${size}`}
+                  widget={{ ...widget, size }}
+                >
                   <ErrorWidget
                     type={String(widget.type)}
-                    error={JSON.stringify(validation.error?.flatten().fieldErrors)}
+                    error={JSON.stringify(
+                      validation.error?.flatten().fieldErrors
+                    )}
                   />
                 </BentoItem>
               );

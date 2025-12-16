@@ -79,10 +79,21 @@ export type WidgetPosition = z.infer<typeof WidgetPositionSchema>;
 // -------------------- Widget Size Types --------------------
 export type WidgetSize = "1x1" | "1x2" | "2x1" | "2x2" | "2x3" | "3x2" | "4x2";
 
-export const WidgetSizeSchema = z.enum(["1x1", "1x2", "2x1", "2x2", "2x3", "3x2", "4x2"]);
+export const WidgetSizeSchema = z.enum([
+  "1x1",
+  "1x2",
+  "2x1",
+  "2x2",
+  "2x3",
+  "3x2",
+  "4x2",
+]);
 
 // Helper to parse size string to dimensions
-export function parseSizeToDimensions(size: WidgetSize): { w: number; h: number } {
+export function parseSizeToDimensions(size: WidgetSize): {
+  w: number;
+  h: number;
+} {
   const [w, h] = size.split("x").map(Number);
   return { w, h };
 }
@@ -93,7 +104,13 @@ export function dimensionsToSize(w: number, h: number): WidgetSize {
 }
 
 // -------------------- Widget Descriptor com tipo genérico --------------------
-export type WidgetType = "text" | "textarea" | "image" | "graph" | "icon-app" | string;
+export type WidgetType =
+  | "text"
+  | "textarea"
+  | "image"
+  | "graph"
+  | "icon-app"
+  | string;
 
 export type WidgetDescriptor<T = any> = {
   id: string | number;
@@ -128,21 +145,21 @@ export const defaultConstraintsByType: Record<string, WidgetConstraints> = {
     maxH: 1,
     lockedAspect: true,
   },
-  "text": {
+  text: {
     resizable: true,
     minW: 1,
     maxW: 4,
     minH: 1,
     maxH: 2,
   },
-  "textarea": {
+  textarea: {
     resizable: true,
     minW: 1,
     maxW: 4,
     minH: 1,
     maxH: 4,
   },
-  "image": {
+  image: {
     resizable: true,
     minW: 1,
     maxW: 4,
@@ -150,7 +167,7 @@ export const defaultConstraintsByType: Record<string, WidgetConstraints> = {
     maxH: 4,
     lockedAspect: true,
   },
-  "graph": {
+  graph: {
     resizable: true,
     minW: 2,
     maxW: 4,
@@ -161,13 +178,15 @@ export const defaultConstraintsByType: Record<string, WidgetConstraints> = {
 
 // Helper to get constraints for a widget type
 export function getDefaultConstraints(type: WidgetType): WidgetConstraints {
-  return defaultConstraintsByType[type] || {
-    resizable: true,
-    minW: 1,
-    maxW: 4,
-    minH: 1,
-    maxH: 4,
-  };
+  return (
+    defaultConstraintsByType[type] || {
+      resizable: true,
+      minW: 1,
+      maxW: 4,
+      minH: 1,
+      maxH: 4,
+    }
+  );
 }
 
 // -------------------- Schema Registry --------------------
