@@ -12,7 +12,7 @@ function App() {
             {/* <Route exact path="/:id/view" component={DetailPage} />
           <Route exact path="/:id/edit" component={EditPage} /> */}
             <Route path="/" element={<MainGridContainer />} />
-            <Route path="*" element={<Navigate to="/" />} />
+            {/* <Route path="*" element={<Navigate to="/" />} /> */}
           </Routes>
         </BrowserRouter>
       </Provider>
