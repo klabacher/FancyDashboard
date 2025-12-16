@@ -30,15 +30,20 @@ export default tseslint.config(
       js.configs.recommended,
       ...tseslint.configs.recommended, // "recommended" é mais estável que "strict"
       // Se quiser ser chato: ...tseslint.configs.strict,
-  // Override for config files to avoid project parser errors
-  {
-    files: ['**/vite.config.ts', '**/vitest.config.ts', '**/tailwind.config.ts', '**/*.config.ts'],
-    languageOptions: {
-      parserOptions: {
-        project: undefined,
+      // Override for config files to avoid project parser errors
+      {
+        files: [
+          "**/vite.config.ts",
+          "**/vitest.config.ts",
+          "**/tailwind.config.ts",
+          "**/*.config.ts",
+        ],
+        languageOptions: {
+          parserOptions: {
+            project: undefined,
+          },
+        },
       },
-    },
-  },
     ],
     files: ["**/*.{ts,tsx}"],
     languageOptions: {

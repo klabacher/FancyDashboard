@@ -30,8 +30,7 @@
       "@Utils/*": ["Utils/*"],
       "@Types/*": ["Types/*"],
       "@__tests__/*": ["__tests__/*"]
-    },
-    
+    }
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

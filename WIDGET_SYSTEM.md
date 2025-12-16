@@ -9,6 +9,7 @@ Sistema moderno de widgets baseado em **pseudo-DOM** (lista de descritores) com 
 ### ComponentFactory (BentoGrid.tsx)
 
 O núcleo do sistema é o `ComponentFactory` que:
+
 - **Recebe uma lista** de `WidgetDescriptor` (pseudo-DOM)
 - **Valida props** automaticamente usando schemas Zod
 - **Renderiza widgets** dinamicamente usando um registry
@@ -28,15 +29,17 @@ const widgets: WidgetDescriptor[] = [
   },
 ];
 
-<ComponentFactory items={widgets} validateProps={true} />
+<ComponentFactory items={widgets} validateProps={true} />;
 ```
 
 ## 📦 Widgets Integrados
 
 ### 1. **TextComponent**
+
 Exibe texto com múltiplas variantes e alinhamentos.
 
 **Props:**
+
 - `text` (string, obrigatório): Texto a exibir
 - `title` (string, opcional): Título do widget
 - `variant` ("default" | "heading" | "subtitle" | "caption"): Estilo do texto
@@ -44,6 +47,7 @@ Exibe texto com múltiplas variantes e alinhamentos.
 - `color` (string, opcional): Cor customizada
 
 **Exemplo:**
+
 ```tsx
 {
   id: "text-1",
@@ -61,9 +65,11 @@ Exibe texto com múltiplas variantes e alinhamentos.
 ```
 
 ### 2. **TextAreaComponent**
+
 Área de texto com suporte a edição e scroll.
 
 **Props:**
+
 - `content` (string, obrigatório): Conteúdo do texto
 - `title` (string, opcional): Título
 - `maxLines` (number, opcional): Número máximo de linhas
@@ -71,6 +77,7 @@ Exibe texto com múltiplas variantes e alinhamentos.
 - `placeholder` (string, opcional): Placeholder quando editável
 
 **Exemplo:**
+
 ```tsx
 {
   id: "textarea-1",
@@ -87,9 +94,11 @@ Exibe texto com múltiplas variantes e alinhamentos.
 ```
 
 ### 3. **ImageComponent**
+
 Imagem com loading state, error handling e overlay.
 
 **Props:**
+
 - `src` (URL, obrigatório): URL da imagem
 - `alt` (string, default: "Imagem"): Texto alternativo
 - `title` (string, opcional): Título
@@ -98,6 +107,7 @@ Imagem com loading state, error handling e overlay.
 - `caption` (string, opcional): Legenda exibida no hover
 
 **Exemplo:**
+
 ```tsx
 {
   id: "image-1",
@@ -116,9 +126,11 @@ Imagem com loading state, error handling e overlay.
 ```
 
 ### 4. **GraphComponent**
+
 Gráficos animados com múltiplos tipos (line, bar, area, pie).
 
 **Props:**
+
 - `title` (string, opcional): Título do gráfico
 - `type` ("line" | "bar" | "area" | "pie", default: "line"): Tipo do gráfico
 - `data` (array, obrigatório): Array de dados com `{ label, value, color? }`
@@ -127,6 +139,7 @@ Gráficos animados com múltiplos tipos (line, bar, area, pie).
 - `animate` (boolean, default: true): Ativa animações
 
 **Exemplo:**
+
 ```tsx
 {
   id: "graph-1",
@@ -217,6 +230,7 @@ const widgets: WidgetDescriptor[] = [
 ## 🎯 Exemplo: Plugin Counter
 
 O projeto inclui um plugin de exemplo (`CounterPlugin.tsx`) que demonstra:
+
 - ✅ Validação de props com Zod
 - ✅ Estado interno com useState
 - ✅ Estilos customizados e variantes de cor
@@ -250,6 +264,7 @@ rowSpan: 1 | 2 | 3 | 4
 ```
 
 ### Grid System
+
 - **Mobile:** 1 coluna
 - **Tablet (sm):** 2 colunas
 - **Desktop (lg):** 4 colunas
@@ -259,6 +274,7 @@ rowSpan: 1 | 2 | 3 | 4
 ## ✨ Animações
 
 Todas as animações são gerenciadas pelo Framer Motion:
+
 - **Layout animations:** Reorganização automática
 - **Enter/Exit:** Fade + scale
 - **Hover states:** Sombras e overlays
@@ -267,6 +283,7 @@ Todas as animações são gerenciadas pelo Framer Motion:
 ## 🛡️ Validação
 
 Sistema de validação em 3 camadas:
+
 1. **Schema Zod:** Define tipos e constraints
 2. **Runtime validation:** Valida props no ComponentFactory
 3. **Error Widget:** Exibe erros de validação em desenvolvimento
@@ -282,6 +299,7 @@ Sistema de validação em 3 camadas:
 ## 🚀 Uso
 
 ### Modo Simples
+
 ```tsx
 import ComponentFactory, { WidgetDescriptor } from "@Components/BentoGrid";
 
@@ -289,25 +307,27 @@ const widgets: WidgetDescriptor[] = [
   { id: 1, type: "text", props: { text: "Hello" } },
 ];
 
-<ComponentFactory items={widgets} />
+<ComponentFactory items={widgets} />;
 ```
 
 ### Modo Avançado com Estado
+
 ```tsx
 const [widgets, setWidgets] = useState<WidgetDescriptor[]>(INITIAL_WIDGETS);
 
 const addWidget = () => {
-  setWidgets(prev => [...prev, newWidget]);
+  setWidgets((prev) => [...prev, newWidget]);
 };
 
 const shuffleWidgets = () => {
-  setWidgets(prev => [...prev].sort(() => Math.random() - 0.5));
+  setWidgets((prev) => [...prev].sort(() => Math.random() - 0.5));
 };
 ```
 
 ## 🔧 Configuração
 
 ### Path Aliases (tsconfig.json / vite.config.ts)
+
 ```json
 {
   "@/": ["./src"],
@@ -341,6 +361,7 @@ src/
 ## 🎓 Recursos Avançados
 
 ### Widgets Clicáveis
+
 ```tsx
 {
   id: "clickable",
@@ -351,6 +372,7 @@ src/
 ```
 
 ### Classes CSS Customizadas
+
 ```tsx
 {
   id: "styled",
@@ -361,16 +383,18 @@ src/
 ```
 
 ### Validação Condicional
+
 ```tsx
-<ComponentFactory 
-  items={widgets} 
-  validateProps={process.env.NODE_ENV === "development"} 
+<ComponentFactory
+  items={widgets}
+  validateProps={process.env.NODE_ENV === "development"}
 />
 ```
 
 ## 🐛 Debug
 
 Erros de validação aparecem como `ErrorWidget` em desenvolvimento:
+
 - Mostra o tipo do widget
 - Exibe mensagens de erro do Zod
 - Styling vermelho para fácil identificação
@@ -384,7 +408,7 @@ Erros de validação aparecem como `ErrorWidget` em desenvolvimento:
 ✅ **Responsivo:** Mobile-first design  
 ✅ **Acessível:** Semântica HTML correta  
 ✅ **Dark Mode:** Suporte nativo  
-✅ **DX Superior:** DevTools integradas  
+✅ **DX Superior:** DevTools integradas
 
 ---
 

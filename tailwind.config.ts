@@ -42,7 +42,7 @@ export default {
       },
       animation: {
         "glass-shimmer": "shimmer 2s linear infinite",
-        "float": "float 6s ease-in-out infinite",
+        float: "float 6s ease-in-out infinite",
         "glow-pulse": "glow-pulse 2s ease-in-out infinite",
       },
       keyframes: {
@@ -60,8 +60,8 @@ export default {
         },
       },
       transitionTimingFunction: {
-        "glass": "cubic-bezier(0.4, 0, 0.2, 1)",
-        "spring": "cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+        glass: "cubic-bezier(0.4, 0, 0.2, 1)",
+        spring: "cubic-bezier(0.175, 0.885, 0.32, 1.275)",
       },
     },
   },
