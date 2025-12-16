@@ -10,12 +10,9 @@ import { registerWidget } from "@Components/BentoGrid";
 import { registerWidgetSchema } from "@Types/widgetSchemas";
 import { useState } from "react";
 import { FiPlus, FiMinus } from "react-icons/fi";
-import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
 
-function cn(...inputs: any[]) {
-  return twMerge(clsx(inputs));
-}
+//helpers
+import { cn } from "@Utils/Helpers";
 
 // 1. Define o schema de validação para o widget
 export const CounterWidgetSchema = z.object({

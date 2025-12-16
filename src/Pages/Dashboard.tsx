@@ -3,10 +3,9 @@ import ComponentFactory, { WidgetDescriptor } from "@Components/BentoGrid";
 import { motion } from "framer-motion";
 import { FiHome, FiGrid, FiSettings, FiRefreshCw } from "react-icons/fi";
 import { initializeBentoPlugins } from "@/Providers/BentoPlugins";
+import Header from "@Components/BentoGridHeader";
 
-// ==================== Demo Widget List (Pseudo-DOM) ====================
 const INITIAL_WIDGETS: WidgetDescriptor[] = [
-  // Text Widgets - Demo de variantes
   {
     id: "text-1",
     type: "text",
@@ -262,61 +261,9 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen w-full bg-transparent">
-      {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-sm bg-transparent border-b border-zinc-200 dark:border-zinc-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-center items-center h-16 gap-1.5">
-            {/* Navigation */}
-            <nav className="flex items-center gap-1.5">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-              >
-                <FiHome size={18} />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-500 text-white transition-colors"
-              >
-                <FiGrid size={18} />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-              >
-                <FiSettings size={18} />
-              </motion.button>
-            </nav>
+      <Header shuffleWidgets={shuffleWidgets} />
 
-            {/* Actions */}
-            <div className="flex items-center gap-3">
-              <motion.button
-                whileHover={{ scale: 1.05, rotate: 180 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={shuffleWidgets}
-                className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
-                title="Reorganizar widgets"
-              >
-                <FiRefreshCw size={18} />
-              </motion.button>
-              {/* <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={addWidget}
-                className="px-4 py-2 rounded-lg bg-blue-500 text-white text-sm font-medium hover:bg-blue-600 transition-colors"
-              >
-                <FiSettings size={18} />
-              </motion.button> */}
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="bg-transparent p-6">
+      <main className="bg-transparent p-1">
         <ComponentFactory items={widgets} validateProps={true} />
       </main>
     </div>

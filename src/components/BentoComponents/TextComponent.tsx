@@ -1,10 +1,7 @@
 import { TextWidgetProps } from "@/Types/widgetSchemas";
-import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
 
-function cn(...inputs: any[]) {
-  return twMerge(clsx(inputs));
-}
+//helpers
+import { cn } from "@Utils/Helpers";
 
 export default function TextComponent({
   text,

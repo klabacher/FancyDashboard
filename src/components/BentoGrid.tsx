@@ -1,19 +1,21 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
 import { ReactNode } from "react";
 
+// types
+import { validateWidgetProps } from "@/Types/widgetSchemas";
+
+//helpers
+import { cn } from "@Utils/Helpers";
+
+// components
 import GraphComponent from "@Components/BentoComponents/GraphComponent";
 import ImageComponent from "@Components/BentoComponents/ImageComponent";
 import TextAreaComponent from "@Components/BentoComponents/TextAreaComponent";
 import TextComponent from "@Components/BentoComponents/TextComponent";
+import IconAppComponent from "@Components/BentoComponents/IconAppComponent";
 
 
 // Helper robusto para classes (se já tiver no projeto, use o seu)
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
 interface BentoGridProps {
   children: ReactNode;
   className?: string;
@@ -121,8 +123,6 @@ export const BentoItem = ({
 
 // -------------------- Factory & Registry --------------------
 
-import { validateWidgetProps } from "@/Types/widgetSchemas";
-
 export type ComponentType = "text" | "textarea" | "image" | "graph" | string;
 
 export type WidgetDescriptor<T = any> = {
@@ -151,6 +151,7 @@ registerWidget("text", TextComponent);
 registerWidget("textarea", TextAreaComponent);
 registerWidget("image", ImageComponent);
 registerWidget("graph", GraphComponent);
+registerWidget("icon-app", IconAppComponent);
 
 // Placeholder when widget type not found
 const MissingWidget: React.FC<{ type: string }> = ({ type }) => (
