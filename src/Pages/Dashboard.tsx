@@ -1,145 +1,324 @@
-import { useState } from "react";
-import { BentoGrid, BentoItem } from "@Components/BentoGrid";
+import { useState, useEffect } from "react";
+import ComponentFactory, { WidgetDescriptor } from "@Components/BentoGrid";
 import { motion } from "framer-motion";
-import { FiHome, FiGrid, FiSettings } from "react-icons/fi";
+import { FiHome, FiGrid, FiSettings, FiRefreshCw } from "react-icons/fi";
+import { initializeBentoPlugins } from "@/Providers/BentoPlugins";
 
-// Mock de dados (Tipagem forte é seu amigo)
-type Widget = {
-  id: string;
-  title: string;
-  type: "stat" | "graph" | "list" | "action";
-  colSpan: 1 | 2 | 4; // Simplificado para exemplo
-  rowSpan: 1 | 2;
-  content: string;
-  color: string;
-};
-
-const INITIAL_WIDGETS: Widget[] = [
+// ==================== Demo Widget List (Pseudo-DOM) ====================
+const INITIAL_WIDGETS: WidgetDescriptor[] = [
+  // Text Widgets - Demo de variantes
   {
-    id: "1",
-    title: "Receita Total",
-    type: "stat",
+    id: "text-1",
+    type: "text",
     colSpan: 2,
-    rowSpan: 2,
-    content: "R$ 124.500",
-    color: "bg-emerald-500",
+    rowSpan: 1,
+    props: {
+      text: "Dashboard de Demonstração",
+      title: "Boas-vindas",
+      variant: "heading",
+      align: "center",
+    },
   },
   {
-    id: "2",
-    title: "Usuários",
-    type: "stat",
+    id: "text-2",
+    type: "text",
     colSpan: 1,
     rowSpan: 1,
-    content: "+2.4k",
-    color: "bg-blue-500",
+    props: {
+      text: "Sistema online e operacional",
+      variant: "subtitle",
+      align: "left",
+      color: "#10b981",
+    },
   },
   {
-    id: "3",
-    title: "Servidores",
-    type: "list",
-    colSpan: 1,
-    rowSpan: 2,
-    content: "Online",
-    color: "bg-orange-500",
-  },
-  {
-    id: "4",
-    title: "Notificações",
-    type: "action",
+    id: "text-3",
+    type: "text",
     colSpan: 1,
     rowSpan: 1,
-    content: "3 Novas",
-    color: "bg-purple-500",
+    props: {
+      text: "Última atualização: 15/12/2025",
+      variant: "caption",
+      align: "right",
+      color: "#6b7280",
+    },
   },
+
+  // Graph Widgets - Diferentes tipos
   {
-    id: "5",
-    title: "Performance",
+    id: "graph-1",
     type: "graph",
     colSpan: 2,
+    rowSpan: 2,
+    props: {
+      title: "Vendas Mensais",
+      type: "bar",
+      data: [
+        { label: "Jan", value: 4500, color: "#3b82f6" },
+        { label: "Fev", value: 5200, color: "#3b82f6" },
+        { label: "Mar", value: 4800, color: "#3b82f6" },
+        { label: "Abr", value: 6100, color: "#3b82f6" },
+        { label: "Mai", value: 5900, color: "#3b82f6" },
+        { label: "Jun", value: 7200, color: "#10b981" },
+      ],
+      showGrid: true,
+      showLegend: true,
+      animate: true,
+    },
+  },
+  {
+    id: "graph-2",
+    type: "graph",
+    colSpan: 2,
+    rowSpan: 2,
+    props: {
+      title: "Performance Semanal",
+      type: "line",
+      data: [
+        { label: "Seg", value: 65 },
+        { label: "Ter", value: 78 },
+        { label: "Qua", value: 82 },
+        { label: "Qui", value: 75 },
+        { label: "Sex", value: 90 },
+        { label: "Sáb", value: 85 },
+        { label: "Dom", value: 70 },
+      ],
+      showGrid: true,
+      showLegend: true,
+      animate: true,
+    },
+  },
+  {
+    id: "graph-3",
+    type: "graph",
+    colSpan: 1,
+    rowSpan: 2,
+    props: {
+      title: "Distribuição",
+      type: "pie",
+      data: [
+        { label: "Produto A", value: 35, color: "#3b82f6" },
+        { label: "Produto B", value: 25, color: "#10b981" },
+        { label: "Produto C", value: 20, color: "#f59e0b" },
+        { label: "Outros", value: 20, color: "#6b7280" },
+      ],
+      showLegend: true,
+      animate: true,
+    },
+  },
+  {
+    id: "graph-4",
+    type: "graph",
+    colSpan: 1,
+    rowSpan: 2,
+    props: {
+      title: "Crescimento",
+      type: "area",
+      data: [
+        { label: "Q1", value: 1200 },
+        { label: "Q2", value: 1800 },
+        { label: "Q3", value: 2400 },
+        { label: "Q4", value: 3200 },
+      ],
+      showGrid: true,
+      animate: true,
+    },
+  },
+
+  // Image Widget
+  {
+    id: "image-1",
+    type: "image",
+    colSpan: 2,
+    rowSpan: 2,
+    props: {
+      src: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800",
+      alt: "Analytics Dashboard",
+      title: "Análise Visual",
+      objectFit: "cover",
+      overlay: true,
+      caption: "Visualização de dados em tempo real",
+    },
+  },
+
+  // TextArea Widgets
+  {
+    id: "textarea-1",
+    type: "textarea",
+    colSpan: 2,
+    rowSpan: 2,
+    props: {
+      content:
+        "Esta é uma demonstração completa do sistema de widgets.\n\nRecursos:\n• Validação automática de props com Zod\n• Animações suaves com Framer Motion\n• Sistema de plugins extensível\n• Layout responsivo e adaptativo\n• Dark mode integrado\n\nTodos os componentes são totalmente tipados e validados em runtime.",
+      title: "Notas do Sistema",
+      editable: false,
+    },
+  },
+  {
+    id: "textarea-2",
+    type: "textarea",
+    colSpan: 2,
+    rowSpan: 2,
+    props: {
+      content: "Digite suas observações aqui...",
+      title: "Editor de Texto",
+      editable: true,
+      placeholder: "Comece a escrever...",
+      maxLines: 8,
+    },
+  },
+
+  // More Text Widgets
+  {
+    id: "text-4",
+    type: "text",
+    colSpan: 1,
     rowSpan: 1,
-    content: "Graph Placeholder",
-    color: "bg-zinc-800",
+    props: {
+      text: "R$ 124.500",
+      title: "Receita Total",
+      variant: "heading",
+      align: "center",
+      color: "#10b981",
+    },
+  },
+  {
+    id: "text-5",
+    type: "text",
+    colSpan: 1,
+    rowSpan: 1,
+    props: {
+      text: "+2.4k usuários",
+      title: "Crescimento",
+      variant: "subtitle",
+      align: "center",
+      color: "#3b82f6",
+    },
+  },
+
+  // Plugin Customizado: Counter Widget
+  {
+    id: "counter-1",
+    type: "counter",
+    colSpan: 1,
+    rowSpan: 2,
+    props: {
+      title: "Contador Interativo",
+      initialValue: 42,
+      min: 0,
+      max: 100,
+      step: 1,
+      color: "purple",
+    },
+  },
+  {
+    id: "counter-2",
+    type: "counter",
+    colSpan: 1,
+    rowSpan: 2,
+    props: {
+      title: "Progresso",
+      initialValue: 75,
+      min: 0,
+      max: 100,
+      step: 5,
+      color: "green",
+    },
   },
 ];
 
 export default function Dashboard() {
-  const [widgets, setWidgets] = useState<Widget[]>(INITIAL_WIDGETS);
+  const [widgets, setWidgets] = useState<WidgetDescriptor[]>(INITIAL_WIDGETS);
 
-  // Exemplo: Função para Expandir/Contrair um widget ao clicar
-  const toggleSize = (id: string) => {
-    setWidgets((prev) =>
-      prev.map((w) => {
-        if (w.id === id) {
-          // Lógica simples: Se for pequeno (1x1), vira grande (2x2), senão volta.
-          const isSmall = w.colSpan === 1 && w.rowSpan === 1;
-          return {
-            ...w,
-            colSpan: isSmall ? 2 : 1,
-            rowSpan: isSmall ? 2 : 1,
-          } as Widget;
-        }
-        return w;
-      })
-    );
-  };
+  // Inicializa plugins ao montar o componente
+  useEffect(() => {
+    initializeBentoPlugins();
+  }, []);
 
-  // Exemplo: Função "Shuffle" para demonstrar a reordenação automática
+  // Shuffle widgets para demonstrar animações
   const shuffleWidgets = () => {
     setWidgets((prev) => [...prev].sort(() => Math.random() - 0.5));
   };
 
+  // Adicionar um novo widget dinamicamente
+  const addWidget = () => {
+    const newWidget: WidgetDescriptor = {
+      id: `dynamic-${Date.now()}`,
+      type: "text",
+      colSpan: 1,
+      rowSpan: 1,
+      props: {
+        text: `Widget #${widgets.length + 1}`,
+        title: "Novo Widget",
+        variant: "default",
+        align: "center",
+      },
+      onClick: () => {
+        alert("Widget clicado!");
+      },
+    };
+    setWidgets((prev) => [...prev, newWidget]);
+  };
 
   return (
-    <div className="min-h-screen p-8 text-zinc-900 dark:text-zinc-100">
-      {/* Header com 3 icones bem pequenos Home - Modules - Settings */}
-      <div className="flex justify-center gap-1.5 items-center mb-8">
-        <FiHome size={20} className="cursor-pointer hover:text-blue-500" />
-        <span className="text-lg font-bold">-</span>
-        <FiGrid size={20} className="cursor-pointer hover:text-blue-500" />
-        <span className="text-lg font-bold">-</span>
-        {/* TODO: Goto settings page. Now closes app */}
-        <FiSettings onClick={() => {}} size={20} className="cursor-pointer hover:text-blue-500" />
-      </div>
+    <div className="min-h-screen w-full bg-transparent">
+      {/* Header */}
+      <header className="sticky top-0 z-50 backdrop-blur-sm bg-transparent border-b border-zinc-200 dark:border-zinc-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center items-center h-16 gap-1.5">
+            {/* Navigation */}
+            <nav className="flex items-center gap-1.5">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              >
+                <FiHome size={18} />
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-500 text-white transition-colors"
+              >
+                <FiGrid size={18} />
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              >
+                <FiSettings size={18} />
+              </motion.button>
+            </nav>
 
-      <BentoGrid>
-        {widgets.map((widget) => (
-          <BentoItem
-            key={widget.id} // CRUCIAL: A key DEVE ser o ID estável do widget, não o index
-            id={widget.id}
-            colSpan={widget.colSpan}
-            rowSpan={widget.rowSpan}
-            onClick={() => toggleSize(widget.id)}
-            className={widget.type === "stat" ? "bg-white" : ""}
-          >
-            <div className="p-4 h-full flex flex-col">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-zinc-500 uppercase">
-                  {widget.type}
-                </span>
-                {/* Indicador visual de interação */}
-                <motion.div
-                  className={`w-2 h-2 rounded-full ${widget.color}`}
-                  layout
-                />
-              </div>
-
-              <div className="flex-1 flex items-center justify-center">
-                <motion.span
-                  className="text-2xl font-bold"
-                  layout // Anima o tamanho da fonte se o container mudar
-                >
-                  {widget.content}
-                </motion.span>
-              </div>
-
-              <div className="mt-auto pt-4 border-t border-zinc-100 dark:border-zinc-800">
-                <h3 className="font-semibold">{widget.title}</h3>
-                <p className="text-xs text-zinc-400">Clique para expandir</p>
-              </div>
+            {/* Actions */}
+            <div className="flex items-center gap-3">
+              <motion.button
+                whileHover={{ scale: 1.05, rotate: 180 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={shuffleWidgets}
+                className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+                title="Reorganizar widgets"
+              >
+                <FiRefreshCw size={18} />
+              </motion.button>
+              {/* <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={addWidget}
+                className="px-4 py-2 rounded-lg bg-blue-500 text-white text-sm font-medium hover:bg-blue-600 transition-colors"
+              >
+                <FiSettings size={18} />
+              </motion.button> */}
             </div>
-          </BentoItem>
-        ))}
-      </BentoGrid>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="bg-transparent p-6">
+        <ComponentFactory items={widgets} validateProps={true} />
+      </main>
     </div>
   );
 }

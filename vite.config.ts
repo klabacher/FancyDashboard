@@ -12,12 +12,14 @@ export default defineConfig(async () => ({
   clearScreen: false,
   resolve: {
     alias: {
+      "@": path.resolve(__dirname, "./src"),
       "@Components": path.resolve(__dirname, "./src/Components"),
       "@Pages": path.resolve(__dirname, "./src/Pages"),
       "@Store": path.resolve(__dirname, "./src/Store"),
       "@State": path.resolve(__dirname, "./src/State"),
       "@Assets": path.resolve(__dirname, "./src/Assets"),
       "@Utils": path.resolve(__dirname, "./src/Utils"),
+      "@Types": path.resolve(__dirname, "./src/Types"),
       "@__tests__": path.resolve(__dirname, "./src/__tests__"),
     },
   },

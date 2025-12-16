@@ -21,12 +21,14 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
+      "@/*": ["./*"],
       "@Components/*": ["Components/*"],
       "@Pages/*": ["Pages/*"],
       "@Store/*": ["Store/*"],
       "@State/*": ["State/*"],
       "@Assets/*": ["Assets/*"],
       "@Utils/*": ["Utils/*"],
+      "@Types/*": ["Types/*"],
       "@__tests__/*": ["__tests__/*"]
     },
     
