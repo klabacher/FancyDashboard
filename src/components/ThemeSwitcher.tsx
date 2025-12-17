@@ -1,5 +1,6 @@
 // src/components/ThemeSwitcher.tsx
-import type { Theme } from "../hooks/useTheme";
+
+type Theme = "light" | "dark" | "emerald";
 
 type Props = {
   theme: Theme;

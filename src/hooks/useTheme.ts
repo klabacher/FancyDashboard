@@ -1,27 +1,19 @@
 // src/hooks/useTheme.ts
 import { useEffect, useState } from "react";
-
-export type Theme = "light" | "dark" | "emerald";
-
-const STORAGE_KEY = "theme";
-
-const getInitialTheme = (): Theme => {
-  if (typeof window === "undefined") return "emerald";
-  const stored = window.localStorage.getItem(STORAGE_KEY) as Theme | null;
-  if (stored === "light" || stored === "dark" || stored === "emerald") {
-    return stored;
-  }
-  return "emerald";
-};
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@store/Redux/Store";
+import { setThemeReducer } from "@store/Redux/Slice";
 
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const dispatch = useDispatch();
+  const persistedTheme = useSelector((state: RootState) => state.app.theme);
+  const [theme, setTheme] = useState(persistedTheme);
 
   useEffect(() => {
-    const root = document.documentElement;
-    root.setAttribute("data-theme", theme);
-    window.localStorage.setItem(STORAGE_KEY, theme);
-  }, [theme]);
+    document.documentElement.setAttribute("data-theme", theme);
+    // Set theme on RootState
+    dispatch(setThemeReducer(theme));
+  }, [theme, dispatch]);
 
   return { theme, setTheme };
 }

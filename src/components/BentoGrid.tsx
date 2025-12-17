@@ -1,75 +1,69 @@
-// src/components/BentoGrid.tsx
-import { useMemo, useState } from "react";
-import GridLayout, { Layout, Layouts } from "react-grid-layout";
+import React from "react";
+import _ from "lodash";
+import RGL from "react-grid-layout";
+import { WidthProvider } from "react-grid-layout/legacy";
+
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
-type BentoItem = {
-  id: string;
-  title: string;
-  content: string;
-};
+const ReactGridLayout = WidthProvider(RGL);
 
-const INITIAL_ITEMS: BentoItem[] = [
-  { id: "a", title: "Card 1", content: "1x1" },
-  { id: "b", title: "Card 2", content: "2x3" },
-  { id: "c", title: "Card 3", content: "3x2" },
-];
-
-const INITIAL_LAYOUT: Layout[] = [
-  { i: "a", x: 0, y: 0, w: 1, h: 1 },
-  { i: "b", x: 1, y: 0, w: 2, h: 3 },
-  { i: "c", x: 3, y: 0, w: 3, h: 2 },
-];
-
-export function BentoGrid() {
-  const [layout, setLayout] = useState<Layout[]>(INITIAL_LAYOUT);
-
-  const cols = useMemo(() => {
-    if (typeof window === "undefined") return 10;
-    const val = getComputedStyle(document.documentElement)
-      .getPropertyValue("--bento-cols")
-      .trim();
-    return Number(val || 10);
-  }, []);
-
-  const rowHeight = useMemo(() => {
-    if (typeof window === "undefined") return 80;
-    const val = getComputedStyle(document.documentElement)
-      .getPropertyValue("--bento-row-height")
-      .trim();
-    return Number(val || 80);
-  }, []);
-
-  const handleLayoutChange = (newLayout: Layout[], _layouts: Layouts) => {
-    setLayout(newLayout);
-    // aqui você poderia persistir em localStorage / backend
+export default class ResizableHandles extends React.PureComponent {
+  static defaultProps = {
+    className: "bg-white/10 w-screen h-screen max-w-screen max-h-screen",
+    items: 20,
+    rowHeight: 30,
+    onLayoutChange: function () {},
+    cols: 12,
   };
 
-  return (
-    <div className="w-screen p-3 max-w-screen mx-auto">
-      <GridLayout
-        className="layout"
-        layout={layout}
-        cols={cols}
-        rowHeight={rowHeight}
-        width={cols * rowHeight} // aproxima quadrado; pode usar containerWidth com resize observer
-        draggableHandle=".drag-handle"
-        onLayoutChange={handleLayoutChange}
+  constructor(props: any) {
+    super(props);
+
+    const layout = this.generateLayout();
+    this.state = { layout };
+  }
+
+  generateDOM() {
+    return _.map(_.range(this.props.items), function (i) {
+      return (
+        <div className="b-2 bg-amber-50 m-2" key={i}>
+          <span className="text">{i}</span>
+        </div>
+      );
+    });
+  }
+
+  generateLayout() {
+    const p = this.props;
+    const availableHandles = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
+
+    return _.map(new Array(p.items), function (item, i) {
+      const y = _.result(p, "y") || Math.ceil(Math.random() * 4) + 1;
+      return {
+        x: (i * 2) % 12,
+        y: Math.floor(i / 6) * y,
+        w: 2,
+        h: y,
+        i: i.toString(),
+        resizeHandles: availableHandles,
+      };
+    });
+  }
+
+  onLayoutChange(layout) {
+    this.props.onLayoutChange(layout);
+  }
+
+  render() {
+    return (
+      <ReactGridLayout
+        layout={this.state.layout}
+        onLayoutChange={this.onLayoutChange}
+        {...this.props}
       >
-        {INITIAL_ITEMS.map((item) => (
-          <div key={item.id} className="p-2">
-            <div className="h-full w-full rounded-3xl bg-bg text-text shadow-md border border-secondary/20 overflow-hidden flex flex-col">
-              <div className="drag-handle cursor-move px-3 py-2 text-xs uppercase tracking-wide text-secondary/80">
-                {item.title}
-              </div>
-              <div className="flex-1 px-4 pb-4 flex items-center justify-center text-sm">
-                {item.content}
-              </div>
-            </div>
-          </div>
-        ))}
-      </GridLayout>
-    </div>
-  );
+        {this.generateDOM()}
+      </ReactGridLayout>
+    );
+  }
 }
