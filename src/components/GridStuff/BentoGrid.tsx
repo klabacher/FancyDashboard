@@ -103,7 +103,7 @@ export default function BentoGrid({ width, height }: BentoGridProps) {
       }}
       dragConfig={{
         ...dragConfig,
-        enabled: resizeConfig.enabled, // Sincroniza drag com resize enable/disable
+        enabled: dragConfig.enabled, // Sincroniza drag com resize enable/disable
       }}
     >
       {elements.map((item) => (
