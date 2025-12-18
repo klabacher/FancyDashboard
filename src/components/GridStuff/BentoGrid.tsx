@@ -1,102 +1,94 @@
-import { useEffect, useState, useCallback } from "react";
-import _ from "lodash";
+import { useEffect, useMemo, useCallback } from "react";
 import RGL from "react-grid-layout";
-import { WidthProvider } from "react-grid-layout/legacy"; // Using legacy to avoid issues with types - to check later FUCK HEELLLL
-import type { BentoGridProps, RGLType } from "@components/types/BentoGrid";
-import { persistor, RootState } from "@store/Redux/Store";
-import { setElements } from "@store/Redux/MainGridSlice";
-
+import { useDispatch, useSelector } from "react-redux";
+import {
+  updateLayout,
+  initializeGrid,
+  selectMainGrid,
+} from "@store/Redux/MainGridSlice";
 import BentoItem from "@components/GridStuff/BentoItem";
 
+// Type Imports
+import type { RGLType, BentoGridProps } from "@components/types/BentoGrid";
+
+// CSS Imports
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
-import { useDispatch, useSelector } from "react-redux";
 
-const ReactGridLayout = WidthProvider(RGL);
-
-// TODO: Criar default bento component and set max width and height to screen size math fuckery
-export default function BentoGrid({
-  className = "bg-white/10 w-screen h-screen max-w-screen max-h-screen",
-  items = 20,
-  onLayoutChange = () => {},
-  GridConfig = {
-    cols: 12,
-    rowHeight: 100,
-    containerPadding: [0, 0],
-    margin: [10, 10],
-    maxRows: 12,
-  },
-}: BentoGridProps) {
-  // Redux integration
+export default function BentoGrid({ width, height }: BentoGridProps) {
   const dispatch = useDispatch();
+  const { elements, gridConfig, isInitialized } = useSelector(selectMainGrid);
 
-  // Set MainGrid Reducer function
-  const setMainGridElements = (layout: RGLType.LayoutItem[]) => {
-    dispatch(setElements(layout));
-  };
+  // 1. Cálculo Matemático para "Travar" a altura da Grid
+  // Altura Disponível = Altura Total - (Margem Superior + Inferior + (Espaço entre linhas * (NumLinhas - 1)))
+  const calculatedRowHeight = useMemo(() => {
+    const totalVerticalMargin = gridConfig.margin[1] * (gridConfig.maxRows + 1);
+    const availableHeight = height - totalVerticalMargin;
+    // Evita divisão por zero ou altura negativa
+    return Math.max(availableHeight / gridConfig.maxRows, 10);
+  }, [height, gridConfig.maxRows, gridConfig.margin]);
 
-  // Set Selector to get current MainGrid state
-  const MainGridState = useSelector((state: RootState) => state.MainGrid);
-
-  const generateLayout = useCallback((): RGLType.Layout => {
-    const availableHandles = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
-
-    // calculate new elements and math fuckery
-    const newElements = Array.from({ length: items }, (_v, i) => {
-      const y = Math.ceil(Math.random() * 4) + 1;
-      return {
-        x: (i * 2) % GridConfig.cols!,
-        y: Math.floor(i / 6) * y,
-        w: 2,
-        h: 2,
-        i: i.toString(),
-        resizeHandles: availableHandles,
-      } as RGLType.LayoutItem;
-    });
-
-    // if elements null, create new layout and Populate Redux Store
-    if (!MainGridState.Elements) {
-      // Populate Redux Store
-      setMainGridElements(newElements);
-      // Returns New PopulatedLayout
-      return newElements as RGLType.LayoutItem[];
-    }
-
-    setMainGridElements(newElements);
-    // Returns New PopulatedLayout
-    return newElements as RGLType.Layout;
-  }, [items, GridConfig.cols, MainGridState.Elements, setMainGridElements]);
-
-  const [layout, setLayout] = useState<RGLType.Layout>(() => generateLayout());
-
+  // 2. Geração Inicial de Layout (Apenas se não estiver inicializado no Redux)
   useEffect(() => {
-    setLayout(generateLayout());
-  }, [generateLayout]);
-
-  const handleLayoutChange = (nextLayout: RGLType.Layout) => {
-    setLayout(nextLayout);
-    if (onLayoutChange) onLayoutChange(nextLayout);
-  };
-
-  // Generate DOM based on the default BentoItem component
-  const generateDOM = useCallback(() => {
-    return _.map(_.range(items), function (i) {
-      return (
-        <div key={i}>
-          <BentoItem index={i} />
-        </div>
+    if (!isInitialized && width > 0) {
+      const itemsCount = 20;
+      const initialLayout: RGLType.LayoutItem[] = Array.from(
+        { length: itemsCount },
+        (_, i) => ({
+          i: i.toString(),
+          x: (i * 2) % gridConfig.cols,
+          y: Math.floor(i / 6) * 2, // Distribuição inicial simples
+          w: 2,
+          h: 2,
+          // Impede que o usuário redimensione para fora da grid (opcional)
+          // maxH: gridConfig.maxRows
+        })
       );
-    });
-  }, [items]);
+      dispatch(initializeGrid(initialLayout));
+    }
+  }, [isInitialized, width, gridConfig.cols, dispatch]);
+
+  // 3. Handler de Mudança (Crucial para persistência)
+  const handleLayoutChange = useCallback(
+    (newLayout: RGLType.Layout) => {
+      console.log("Layout Changed:", newLayout);
+      // Aqui você pode adicionar um debounce se sentir lentidão,
+      // mas o RGL geralmente lida bem com isso no onLayoutChange (drag stop).
+      // IMPORTANTE: Só atualizamos se o layout for diferente para evitar loops,
+      // mas o Redux Toolkit já faz shallow equality check no state.
+      dispatch(updateLayout(newLayout as RGLType.LayoutItem[]));
+    },
+    [dispatch]
+  );
+
+  // Se não estiver inicializado, mostramos nada ou um esqueleto
+  if (!isInitialized) return null;
 
   return (
-    <ReactGridLayout
-      layout={layout}
+    <RGL
+      className="layout"
+      // Passamos o layout do Redux (Fonte da Verdade)
+      layout={elements}
+      // Dimensões vindas do SizeProvider
+      width={width}
+      // Configurações calculadas
+      gridConfig={{ ...gridConfig, rowHeight: calculatedRowHeight }}
+      // margin={gridConfig.margin}
+      // containerPadding={gridConfig.containerPadding}
+      // maxRows={gridConfig.maxRows}
+      // Callbacks
       onLayoutChange={handleLayoutChange}
-      className={className}
-      gridConfig={GridConfig}
+      // Props de comportamento
+      // compactType={"vertical"} // "null" permite espaços vazios (free movement). Use "vertical" para gravidade.
+      // preventCollision={false} // Define se itens empurram ou trocam
+      // isBounded={true} // Mantém itens dentro do container
     >
-      {generateDOM()}
-    </ReactGridLayout>
+      {elements.map((item) => (
+        <div key={item.i} data-grid={item} className="group">
+          {/* Passamos o item.h/w se o BentoItem precisar ser responsivo internamente */}
+          <BentoItem index={Number(item.i)} />
+        </div>
+      ))}
+    </RGL>
   );
 }

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { Layout, LayoutItem } from "react-grid-layout";
+import type { LayoutItem } from "react-grid-layout";
 
 interface GridConfigState {
   cols: number;

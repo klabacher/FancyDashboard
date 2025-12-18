@@ -1,89 +1,40 @@
 import React, { useState, useEffect, useRef } from "react";
 import type { BentoGridProps } from "@components/types/BentoGrid";
-
-// Hook to get parent size using ResizeObserver
-function useParentSize() {
-  const [size, setSize] = useState({ width: 0, height: 0 });
-  const childRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!childRef.current) return console.warn("childRef is null");
-
-    const parentElement = childRef.current.parentElement;
-    if (!parentElement) return console.warn("Parent element is null");
-
-    // Função para atualizar o estado com as dimensões do pai
-    const updateSize = () => {
-      setSize({
-        width: parentElement.offsetWidth,
-        height: parentElement.offsetHeight,
-      });
-    };
-
-    // Cria uma instância do ResizeObserver
-    const observer = new ResizeObserver(updateSize);
-
-    // Observa o elemento pai
-    observer.observe(parentElement);
-
-    // Chama updateSize inicial para definir o tamanho na montagem
-    updateSize();
-
-    // Limpeza: desconecta o observer quando o componente desmonta
-    return () => {
-      observer.disconnect();
-    };
-  }, []); // Dependências vazias garantem que isso rode uma vez
-
-  return { size, childRef };
-}
-
 export default function SizeProvider({
   BentoGrid,
 }: {
   BentoGrid: React.ComponentType<BentoGridProps>;
 }) {
-  //TODO arrumar proporção foda
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-  // Get size from parent and make the necessary calculations here and pass to bentogrid
-  const { size, childRef } = useParentSize();
-  const { width, height } = size;
+  useEffect(() => {
+    if (!containerRef.current) return;
 
-  // Rows X Columns calculation
-  // Assuming a 16:9 aspect ratio for the grid
-  const aspectRatio = 1 / 1;
-  const gridRows = 16;
-  const gridCols = 9;
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        // RequestAnimationFrame solves "ResizeObserver loop limit exceeded"
+        requestAnimationFrame(() => {
+          setDimensions({ width, height });
+        });
+      }
+    });
 
-  let calculatedWidth = width;
-  let calculatedHeight = height;
+    resizeObserver.observe(containerRef.current);
+    return () => resizeObserver.disconnect();
+  }, []);
 
-  if (width / height > aspectRatio) {
-    calculatedWidth = height * aspectRatio;
-  } else {
-    calculatedHeight = width / aspectRatio;
-  }
-
-  console.log("Calculated Size:", { calculatedWidth, calculatedHeight });
-
-  //Final GridConfig
-  const GridConfig: BentoGridProps["GridConfig"] = {
-    cols: gridCols,
-    rowHeight: calculatedHeight / gridRows,
-    containerPadding: [0, 0],
-    margin: [10, 10],
-    maxRows: gridRows,
-  };
+  // Só renderiza a Grid se tivermos dimensões reais para evitar "flicker"
+  const isReady = dimensions.width > 0 && dimensions.height > 0;
+  console.log("SizeProvider dimensions:", dimensions, isReady);
 
   return (
-    <div ref={childRef} className="w-full h-full">
-      {calculatedWidth > 0 && calculatedHeight > 0 && (
-        <BentoGrid
-          className="w-full h-full"
-          items={20}
-          rowHeight={100}
-          GridConfig={GridConfig}
-        />
+    <div ref={containerRef} className="w-full h-full overflow-hidden">
+      {isReady ? (
+        <BentoGrid width={dimensions.width} height={dimensions.height} />
+      ) : (
+        <div className="size-full bg-black text-white text-5xl">Loading...</div>
       )}
     </div>
   );

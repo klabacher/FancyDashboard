@@ -1,5 +1,9 @@
 // src/components/ThemeSwitcher.tsx
 
+// A simple Theme Switcher component
+
+import { persistor } from "@store/Redux/Store";
+
 type Theme = "light" | "dark" | "emerald";
 
 type Props = {
@@ -26,6 +30,17 @@ export function ThemeSwitcher({ theme, setTheme }: Props) {
           {t.charAt(0).toUpperCase() + t.slice(1)}
         </button>
       ))}
+      <button
+        type="button"
+        className="p-3 rounded-md text-xs border border-red-400/40 transition font-bold font-sans bg-red-400/20 hover:bg-red-400/40"
+        onClick={() => {
+          persistor.flush();
+          localStorage.clear();
+          window.location.reload();
+        }}
+      >
+        Reset App
+      </button>
     </div>
   );
 }
