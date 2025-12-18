@@ -22,10 +22,19 @@ export default function BentoGrid({ width, height }: BentoGridProps) {
   // 1. Cálculo Matemático para "Travar" a altura da Grid
   // Altura Disponível = Altura Total - (Margem Superior + Inferior + (Espaço entre linhas * (NumLinhas - 1)))
   const calculatedRowHeight = useMemo(() => {
+    // Proteção: Se a altura for 0 (inicialização), retorna um valor seguro para evitar NaN
+    if (height <= 0) return 30;
+
     const totalVerticalMargin = gridConfig.margin[1] * (gridConfig.maxRows + 1);
     const availableHeight = height - totalVerticalMargin;
-    // Evita divisão por zero ou altura negativa
-    return Math.max(availableHeight / gridConfig.maxRows, 10);
+
+    // Cálculo da altura ideal
+    const rawHeight = availableHeight / gridConfig.maxRows;
+
+    // AQUI ESTÁ O SEGREDO:
+    // Nunca permita que uma linha seja menor que 30px, senão o texto sobrepõe.
+    // Isso pode fazer a grid crescer além da tela (scroll), mas evita o overlap feio.
+    return Math.max(rawHeight, 30);
   }, [height, gridConfig.maxRows, gridConfig.margin]);
 
   // 2. Geração Inicial de Layout (Apenas se não estiver inicializado no Redux)
