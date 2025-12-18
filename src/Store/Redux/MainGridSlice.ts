@@ -8,18 +8,28 @@ interface GridConfigState {
   containerPadding: [number, number];
 }
 
+type ResizeHandleAxis = "s" | "w" | "e" | "n" | "sw" | "nw" | "se" | "ne";
+
 interface AppState {
   gridConfig: GridConfigState;
   elements: LayoutItem[]; // Layout persistido
+  resizeConfig: {
+    handles: ResizeHandleAxis[];
+    enabled: boolean;
+  };
   isInitialized: boolean; // Flag para saber se já geramos o layout inicial
 }
 
 const initialState: AppState = {
   gridConfig: {
-    cols: 12,
-    maxRows: 12, // Grid fixa 12x12
+    cols: 6,
+    maxRows: 6, // Grid fixa 6x6
     margin: [10, 10],
     containerPadding: [10, 10],
+  },
+  resizeConfig: {
+    handles: ["se", "sw", "nw", "ne", "n", "s", "e", "w"],
+    enabled: true,
   },
   elements: [],
   isInitialized: false,
@@ -32,6 +42,13 @@ export const appSlice = createSlice({
     // Atualiza o layout quando o usuário move/redimensiona
     updateLayout: (state, action: PayloadAction<LayoutItem[]>) => {
       state.elements = action.payload;
+    },
+    // Update the resize configuration - TODO: add handles modification later
+    updateResizeConfig: (state, action: PayloadAction<boolean>) => {
+      state.resizeConfig = {
+        ...state.resizeConfig,
+        enabled: action.payload,
+      };
     },
     // Inicializa a grid apenas uma vez
     initializeGrid: (state, action: PayloadAction<LayoutItem[]>) => {
@@ -48,8 +65,12 @@ export const appSlice = createSlice({
   },
 });
 
-export const { updateLayout, initializeGrid, updateGridConfig } =
-  appSlice.actions;
+export const {
+  updateLayout,
+  initializeGrid,
+  updateGridConfig,
+  updateResizeConfig,
+} = appSlice.actions;
 
 export const selectMainGrid = (state: { MainGrid: AppState }) => state.MainGrid;
 

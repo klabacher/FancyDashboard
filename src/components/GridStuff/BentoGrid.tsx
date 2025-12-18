@@ -17,7 +17,8 @@ import "react-resizable/css/styles.css";
 
 export default function BentoGrid({ width, height }: BentoGridProps) {
   const dispatch = useDispatch();
-  const { elements, gridConfig, isInitialized } = useSelector(selectMainGrid);
+  const { elements, gridConfig, isInitialized, resizeConfig } =
+    useSelector(selectMainGrid);
 
   // 1. Cálculo Matemático para "Travar" a altura da Grid
   // Altura Disponível = Altura Total - (Margem Superior + Inferior + (Espaço entre linhas * (NumLinhas - 1)))
@@ -50,12 +51,12 @@ export default function BentoGrid({ width, height }: BentoGridProps) {
           w: 2,
           h: 2,
           // Impede que o usuário redimensione para fora da grid (opcional)
-          // maxH: gridConfig.maxRows
+          maxH: gridConfig.maxRows,
         })
       );
       dispatch(initializeGrid(initialLayout));
     }
-  }, [isInitialized, width, gridConfig.cols, dispatch]);
+  }, [isInitialized, width, gridConfig.cols, dispatch, gridConfig.maxRows]);
 
   // 3. Handler de Mudança (Crucial para persistência)
   const handleLayoutChange = useCallback(
@@ -73,9 +74,11 @@ export default function BentoGrid({ width, height }: BentoGridProps) {
   // Se não estiver inicializado, mostramos nada ou um esqueleto
   if (!isInitialized) return null;
 
+  console.log("Rendering BentoGrid with elements:", resizeConfig);
+
   return (
     <RGL
-      className="layout"
+      className="layout w-full h-full overflow-hidden relative"
       // Passamos o layout do Redux (Fonte da Verdade)
       layout={elements}
       // Dimensões vindas do SizeProvider
@@ -91,11 +94,22 @@ export default function BentoGrid({ width, height }: BentoGridProps) {
       // compactType={"vertical"} // "null" permite espaços vazios (free movement). Use "vertical" para gravidade.
       // preventCollision={false} // Define se itens empurram ou trocam
       // isBounded={true} // Mantém itens dentro do container
+      // constraints -> Latter use
+      autoSize={false} // Desliga autoSize para termos controle total da altura
+      resizeConfig={{
+        handles: resizeConfig.handles,
+        enabled: resizeConfig.enabled,
+        // handleComponent(axis, ref) {} exposed handler for better management -> later use
+      }}
     >
       {elements.map((item) => (
         <div key={item.i} data-grid={item} className="group">
-          {/* Passamos o item.h/w se o BentoItem precisar ser responsivo internamente */}
-          <BentoItem index={Number(item.i)} />
+          <BentoItem
+            index={Number(item.i)}
+            gridW={item.w}
+            gridH={item.h}
+            rowHeight={calculatedRowHeight}
+          />
         </div>
       ))}
     </RGL>
