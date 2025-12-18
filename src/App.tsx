@@ -10,12 +10,12 @@ export function AppContainer() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="min-h-screen min-w-screen bg-(--color-bg) text-(--color-text) transition-colors">
+    <div className="h-screen w-screen bg-(--color-bg) text-(--color-text) transition-colors flex flex-col overflow-hidden">
       <div className="max-w-2xl max-h-lg mx-auto py-8 px-4 flex items-center justify-between">
         <ThemeSwitcher theme={theme} setTheme={setTheme} />
       </div>
 
-      <main className="min-h-screen min-w-screen py-6 px-4">
+      <main className="flex-1 w-full min-h-0 relative px-4 pb-4">
         <SizeProvider BentoGrid={BentoGrid} />
       </main>
     </div>
