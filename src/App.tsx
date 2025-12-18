@@ -3,8 +3,8 @@ import { Provider } from "react-redux";
 import { store } from "@/store/Redux/Store";
 import { useTheme } from "./hooks/useTheme";
 import { ThemeSwitcher } from "./components/ThemeSwitcher";
-import BentoGrid from "./components/BentoGrid";
-import SizeProvider from "./providers/SizeProvider";
+import BentoGrid from "@components/GridStuff/BentoGrid";
+import SizeProvider from "./components/GridStuff/SizeProvider";
 
 export function AppContainer() {
   const { theme, setTheme } = useTheme();
@@ -12,7 +12,6 @@ export function AppContainer() {
   return (
     <div className="min-h-screen min-w-screen bg-(--color-bg) text-(--color-text) transition-colors">
       <div className="max-w-2xl max-h-lg mx-auto py-8 px-4 flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Bento Grid + Theme</h1>
         <ThemeSwitcher theme={theme} setTheme={setTheme} />
       </div>
 

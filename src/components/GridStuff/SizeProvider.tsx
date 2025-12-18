@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
-import type { BentoGridProps } from "@/components/BentoGrid";
+import type { BentoGridProps } from "@components/types/BentoGrid";
 
 // Hook to get parent size using ResizeObserver
 function useParentSize() {
   const [size, setSize] = useState({ width: 0, height: 0 });
-  const childRef = useRef(null);
+  const childRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!childRef.current) return;
+    if (!childRef.current) return console.warn("childRef is null");
 
     const parentElement = childRef.current.parentElement;
-    if (!parentElement) return;
+    if (!parentElement) return console.warn("Parent element is null");
 
     // Função para atualizar o estado com as dimensões do pai
     const updateSize = () => {

@@ -12,9 +12,11 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import appReducer from "./Slice"; // Ajuste o caminho conforme seu projeto
+import MainSliceReducer from "./MainGridSlice"; // Ajuste o caminho conforme seu projeto
 
 const rootReducer = combineReducers({
   app: appReducer,
+  MainGrid: MainSliceReducer,
 });
 
 const persistConfig = {

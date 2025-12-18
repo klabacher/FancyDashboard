@@ -16,11 +16,14 @@ export function ThemeSwitcher({ theme, setTheme }: Props) {
         <button
           key={t}
           type="button"
-          onClick={() => setTheme(t)}
-          className={`px-3 py-1 rounded-full text-xs border border-secondary/40 transition
-            ${theme === t ? "bg-primary text-bg" : "bg-bg text-text hover:bg-secondary/20"}`}
+          onClick={() => {
+            console.log(t);
+            setTheme(t);
+          }}
+          className={`p-3 rounded-md text-xs border border-secondary/40 transition font-bold font-sans
+            ${theme === t ? " bg-violet-50/80 text-black transform scale-115" : "bg-violet-50/40"}`}
         >
-          {t}
+          {t.charAt(0).toUpperCase() + t.slice(1)}
         </button>
       ))}
     </div>
