@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import type { BentoGridProps } from "@components/types/BentoGrid";
 export default function SizeProvider({
   BentoGrid,
+  mainDivRef,
 }: {
   BentoGrid: React.ComponentType<BentoGridProps>;
+  mainDivRef: React.RefObject<HTMLDivElement | null>;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -28,6 +30,22 @@ export default function SizeProvider({
   // Só renderiza a Grid se tivermos dimensões reais para evitar "flicker"
   const isReady = dimensions.width > 0 && dimensions.height > 0;
   console.log("SizeProvider dimensions:", dimensions, isReady);
+
+  if (!mainDivRef.current) {
+    return (
+      <div ref={containerRef} className="w-full h-full overflow-hidden">
+        <div className="size-full bg-red-600 text-white text-5xl">
+          Error: mainDivRef is null
+        </div>
+      </div>
+    );
+  } else {
+    console.log("SizeProvider mainDivRef:", mainDivRef.current);
+    console.log("SizeProvider mainDivRef dimensions:", {
+      width: mainDivRef.current.offsetWidth,
+      height: mainDivRef.current.offsetHeight,
+    });
+  }
 
   return (
     <div ref={containerRef} className="w-full h-full overflow-hidden">

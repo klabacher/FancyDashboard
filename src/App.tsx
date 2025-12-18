@@ -5,9 +5,12 @@ import { useTheme } from "./hooks/useTheme";
 import { ThemeSwitcher } from "./components/ThemeSwitcher";
 import BentoGrid from "@components/GridStuff/BentoGrid";
 import SizeProvider from "./components/GridStuff/SizeProvider";
+import { useRef } from "react";
 
 export function AppContainer() {
   const { theme, setTheme } = useTheme();
+
+  const divRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="h-screen w-screen bg-(--color-bg) text-(--color-text) transition-colors flex flex-col overflow-hidden">
@@ -15,8 +18,8 @@ export function AppContainer() {
         <ThemeSwitcher theme={theme} setTheme={setTheme} />
       </div>
 
-      <main className="flex-1 w-full min-h-0 relative px-4 pb-4">
-        <SizeProvider BentoGrid={BentoGrid} />
+      <main ref={divRef} className="flex-1 w-full min-h-0 relative px-4 pb-4">
+        <SizeProvider mainDivRef={divRef} BentoGrid={BentoGrid} />
       </main>
     </div>
   );
