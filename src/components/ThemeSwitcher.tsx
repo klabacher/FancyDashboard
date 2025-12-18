@@ -4,6 +4,7 @@
 
 import {
   selectMainGrid,
+  updateDragConfig,
   updateResizeConfig,
 } from "@/store/Redux/MainGridSlice";
 import { persistor } from "@store/Redux/Store";
@@ -20,7 +21,7 @@ const THEMES: Theme[] = ["light", "dark", "emerald"];
 
 export function ThemeSwitcher({ theme, setTheme }: Props) {
   const dispatch = useDispatch();
-  const { resizeConfig } = useSelector(selectMainGrid);
+  const { resizeConfig, dragConfig } = useSelector(selectMainGrid);
   return (
     <div className="flex items-center gap-2">
       {THEMES.map((t) => (
@@ -58,6 +59,17 @@ export function ThemeSwitcher({ theme, setTheme }: Props) {
         }}
       >
         Toggle Resize
+      </button>
+      <button
+        type="button"
+        className="p-3 rounded-md text-xs border border-red-400/40 transition font-bold font-sans bg-red-400/20 hover:bg-red-400/40"
+        onClick={() => {
+          // Toggle resize enable/disable
+          // Dispatch action to toggle resize
+          dispatch(updateDragConfig({ enabled: !dragConfig.enabled }));
+        }}
+      >
+        Toggle Drag
       </button>
     </div>
   );

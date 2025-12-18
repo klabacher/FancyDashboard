@@ -17,7 +17,7 @@ import "react-resizable/css/styles.css";
 
 export default function BentoGrid({ width, height }: BentoGridProps) {
   const dispatch = useDispatch();
-  const { elements, gridConfig, isInitialized, resizeConfig } =
+  const { elements, gridConfig, isInitialized, resizeConfig, dragConfig } =
     useSelector(selectMainGrid);
 
   // 1. Cálculo Matemático para "Travar" a altura da Grid
@@ -100,6 +100,10 @@ export default function BentoGrid({ width, height }: BentoGridProps) {
         handles: resizeConfig.handles,
         enabled: resizeConfig.enabled,
         // handleComponent(axis, ref) {} exposed handler for better management -> later use
+      }}
+      dragConfig={{
+        ...dragConfig,
+        enabled: resizeConfig.enabled, // Sincroniza drag com resize enable/disable
       }}
     >
       {elements.map((item) => (
