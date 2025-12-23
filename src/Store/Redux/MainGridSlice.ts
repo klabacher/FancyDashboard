@@ -41,7 +41,7 @@ export const appSlice = createSlice({
         enabled: action.payload,
       };
     },
-    updateDragConfig: (state, action: PayloadAction<DragConfig>) => {
+    updateDragConfig: (state, action: PayloadAction<Partial<DragConfig>>) => {
       state.dragConfig = {
         ...state.dragConfig,
         ...action.payload,
