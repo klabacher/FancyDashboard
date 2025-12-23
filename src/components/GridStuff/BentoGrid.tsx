@@ -41,15 +41,15 @@ export default function BentoGrid({ width, height }: BentoGridProps) {
   // 2. Geração Inicial de Layout (Apenas se não estiver inicializado no Redux)
   useEffect(() => {
     if (!isInitialized && width > 0) {
-      const itemsCount = 20;
+      const itemsCount = 10;
       const initialLayout: RGLType.LayoutItem[] = Array.from(
         { length: itemsCount },
         (_, i) => ({
           i: i.toString(),
-          x: (i * 2) % gridConfig.cols,
-          y: Math.floor(i / 6) * 2, // Distribuição inicial simples
-          w: 2,
-          h: 2,
+          x: (i * 1) % gridConfig.cols,
+          y: Math.floor(i / gridConfig.cols) * 1, // Distribuição inicial simples
+          w: 1,
+          h: 1,
           // Impede que o usuário redimensione para fora da grid (opcional)
           maxH: gridConfig.maxRows,
         })
@@ -84,16 +84,20 @@ export default function BentoGrid({ width, height }: BentoGridProps) {
       // Dimensões vindas do SizeProvider
       width={width}
       // Configurações calculadas
-      gridConfig={{ ...gridConfig, rowHeight: calculatedRowHeight }}
-      // margin={gridConfig.margin}
-      // containerPadding={gridConfig.containerPadding}
-      // maxRows={gridConfig.maxRows}
+      gridConfig={{
+        cols: gridConfig.cols,
+        containerPadding: gridConfig.containerPadding,
+        margin: gridConfig.margin,
+        maxRows: gridConfig.maxRows,
+        rowHeight: calculatedRowHeight,
+      }}
       // Callbacks
       onLayoutChange={handleLayoutChange}
       // Props de comportamento
       // compactType={"vertical"} // "null" permite espaços vazios (free movement). Use "vertical" para gravidade.
-      // preventCollision={false} // Define se itens empurram ou trocam
-      // isBounded={true} // Mantém itens dentro do container
+      // droppingItem={} latter use - item that is added when dropped from outside
+      // dropConfig={}
+      // compactor={ } latter use
       // constraints -> Latter use
       autoSize={false} // Desliga autoSize para termos controle total da altura
       resizeConfig={{
