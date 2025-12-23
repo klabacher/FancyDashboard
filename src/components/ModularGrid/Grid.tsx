@@ -8,10 +8,16 @@ import { Icons } from "./icons";
 type GridProps = {
   items: GridItemModel[];
   dispatch: React.Dispatch<GridAction>;
-  isMobile: boolean;
+  gridCols: number;
+  maxRows: number;
 };
 
-export const Grid: React.FC<GridProps> = ({ items, dispatch, isMobile }) => {
+export const Grid: React.FC<GridProps> = ({
+  items,
+  dispatch,
+  gridCols,
+  maxRows,
+}) => {
   return (
     <main className="max-w-7xl mx-auto pb-24">
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 auto-rows-min grid-flow-dense">
@@ -22,7 +28,8 @@ export const Grid: React.FC<GridProps> = ({ items, dispatch, isMobile }) => {
               item={item}
               index={index}
               dispatch={dispatch}
-              isMobile={isMobile}
+              gridCols={gridCols}
+              maxRows={maxRows}
             />
           ))}
         </AnimatePresence>

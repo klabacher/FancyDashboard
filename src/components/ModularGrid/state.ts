@@ -1,25 +1,46 @@
-import type React from "react";
+import type { Reducer } from "react";
 
 import type { GridAction, GridItemModel } from "./types";
-import { generateColor, generateId } from "./utils";
+import { createGridItem, generateColor } from "./utils";
 
 export const initialState: GridItemModel[] = [
-  { id: "1", colSpan: 2, rowSpan: 1, color: generateColor() },
-  { id: "2", colSpan: 1, rowSpan: 2, color: generateColor() },
-  { id: "3", colSpan: 1, rowSpan: 1, color: generateColor() },
-  { id: "4", colSpan: 2, rowSpan: 2, color: generateColor() },
+  {
+    id: "1",
+    colSpan: 2,
+    rowSpan: 1,
+    color: generateColor(),
+    content: { kind: "text", text: "Bem-vindo" },
+  },
+  {
+    id: "2",
+    colSpan: 1,
+    rowSpan: 2,
+    color: generateColor(),
+    content: { kind: "number", value: 128, label: "KPI" },
+  },
+  {
+    id: "3",
+    colSpan: 1,
+    rowSpan: 1,
+    color: generateColor(),
+    content: { kind: "appicon", name: "Tauri", src: "/tauri.svg" },
+  },
+  {
+    id: "4",
+    colSpan: 2,
+    rowSpan: 2,
+    color: generateColor(),
+    content: { kind: "image", src: "/vite.svg", alt: "Vite", fit: "cover" },
+  },
 ];
 
-export const gridReducer: React.Reducer<GridItemModel[], GridAction> = (
+export const gridReducer: Reducer<GridItemModel[], GridAction> = (
   state,
   action
 ) => {
   switch (action.type) {
     case "ADD":
-      return [
-        ...state,
-        { id: generateId(), colSpan: 1, rowSpan: 1, color: generateColor() },
-      ];
+      return [...state, createGridItem(action.payload ?? "text")];
     case "REMOVE":
       return state.filter((item) => item.id !== action.payload);
     case "RESIZE":

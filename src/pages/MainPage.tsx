@@ -6,20 +6,55 @@ import {
   Header,
   gridReducer,
   initialState,
+  loadPersistedItems,
+  persistItems,
+  useGridColumns,
 } from "@components/ModularGrid";
 
 export default function ModularGridApp() {
-  const [items, dispatch] = useReducer(gridReducer, initialState);
+  const [items, dispatch] = useReducer(
+    gridReducer,
+    initialState,
+    (defaultState) => loadPersistedItems() ?? defaultState
+  );
   const [mounted, setMounted] = useState<boolean>(false);
-  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const gridCols = useGridColumns();
+  const maxRows = 6;
 
   useEffect(() => {
     setMounted(true);
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  useEffect(() => {
+    persistItems(items);
+  }, [items]);
+
+  useEffect(() => {
+    // Clamp spans when moving between breakpoints (e.g. desktop -> mobile)
+    for (const item of items) {
+      const minColSpan = item.resize?.minColSpan ?? 1;
+      const minRowSpan = item.resize?.minRowSpan ?? 1;
+
+      const maxColSpan = Math.max(
+        1,
+        Math.min(gridCols, item.resize?.maxColSpan ?? gridCols)
+      );
+      const maxRowSpan = Math.max(
+        1,
+        Math.min(maxRows, item.resize?.maxRowSpan ?? maxRows)
+      );
+
+      const nextCol = Math.min(maxColSpan, Math.max(minColSpan, item.colSpan));
+      const nextRow = Math.min(maxRowSpan, Math.max(minRowSpan, item.rowSpan));
+
+      if (nextCol !== item.colSpan || nextRow !== item.rowSpan) {
+        dispatch({
+          type: "RESIZE",
+          payload: { id: item.id, colSpan: nextCol, rowSpan: nextRow },
+        });
+      }
+    }
+  }, [gridCols, maxRows, items]);
 
   // Evita renderizar antes de montar no cliente (prevenção de tela branca/hidratação)
   if (!mounted) return <div className="min-h-screen bg-slate-50" />;
@@ -31,7 +66,12 @@ export default function ModularGridApp() {
         onReset={() => dispatch({ type: "RESET" })}
       />
 
-      <Grid items={items} dispatch={dispatch} isMobile={isMobile} />
+      <Grid
+        items={items}
+        dispatch={dispatch}
+        gridCols={gridCols}
+        maxRows={maxRows}
+      />
 
       {/* Footer Fixo */}
       <div className="fixed bottom-6 inset-x-0 flex justify-center pointer-events-none z-50">
